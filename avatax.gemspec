@@ -19,4 +19,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 4.1.8"
   s.add_dependency 'weblinc', '~> 0.5.0'
+  s.add_dependency 'vizjerai-avalara', '~> 0.3.1'
 end
