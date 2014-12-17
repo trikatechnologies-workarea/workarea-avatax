@@ -20,8 +20,14 @@ module Weblinc
 #          taxable_items.each do |item|
 #            assign_item_tax(item)
 #          end
+
+puts "MRA [adjust:#{__LINE__}] order.shipping_address: ",order.shipping_address.inspect
+puts "MRA [adjust:#{__LINE__}] order.user_id: ",order.user_id
+puts "MRA [adjust:#{__LINE__}] order.name: ",order.name
+puts "MRA [adjust:#{__LINE__}] order.number: ",order.number
+puts "MRA [adjust:#{__LINE__}] order.email: ",order.email
            avalara_with_fake_data
-          
+
 
 #          assign_shipping_tax if order.shipping_method.present?
         end
@@ -89,7 +95,7 @@ module Weblinc
         end
 
         def avalara_tax_code(item)
-          weblinc_tax_code =item.price_adjustments.inject("") do |tax_code, adjustment|  
+          weblinc_tax_code =item.price_adjustments.inject("") do |tax_code, adjustment|
             tax_code + String(adjustment.data['tax_code'])
           end
           case weblinc_tax_code
@@ -101,7 +107,20 @@ module Weblinc
             tax_code = weblinc_tax_code    #TODO
            end
 
-           tax_code 
+           tax_code
+        end
+
+        def avalara_line_from_shipping_adjustment(adjustment,index)
+          line = {
+            :LineNo => "FR_"+index.to_s,
+            :ItemCode => 'shipping',
+            :Qty => adjustment.quantity,
+            :Amount => adjustment.amount_cents/100,
+            :OriginCode => "01",
+            :DestinationCode => "02",
+            :Description => adjustment.description,
+            :TaxCode => 'FR'   #TODO what if data_code not "001"
+          }
         end
 
         def avalara_line_from_item(item,index)
@@ -118,7 +137,19 @@ module Weblinc
           }
         end
 
-        def avalara_assign_item_tax(taxLine)  
+        def avalara_assign_shipping_tax(taxLine)
+          tax = taxLine["Tax"].to_f
+          if tax > 0
+            order.shipping_method.adjust_pricing(
+              price: 'tax',
+              calculator: self.class.name,
+              description: 'Tax',
+              amount: tax
+            )
+          end
+        end
+
+        def avalara_assign_item_tax(taxLine)
           idx = taxLine["LineNo"].to_i
           tax = taxLine["Tax"].to_f
           if tax > 0
@@ -129,6 +160,14 @@ module Weblinc
               description: 'Tax',
               amount: tax
             )
+          end
+        end
+
+        def avalara_assign_tax(taxLine)
+          if (taxLine["LineNo"].index('FR_') == 0)
+            avalara_assign_shipping_tax(taxLine)
+          else
+            avalara_assign_item_tax(taxLine)
           end
         end
 
@@ -155,20 +194,23 @@ module Weblinc
 
 	def avalara_with_fake_data
           lines = []
-          order.items.each_with_index do |item, index| 
+          order.items.each_with_index do |item, index|
             lines << avalara_line_from_item(item, index)
           end
-            
+          order.shipping_method.price_adjustments.each_with_index do |adjustment, index|
+            lines << avalara_line_from_shipping_adjustment(adjustment,index)
+          end
+
           getTaxRequest = {
-            :CustomerCode => "REVELRYLABSDEV",        #TODO
+            :CustomerCode => order.email,             #TODO ?email > 50Chars?
             :DocDate => Time.now.strftime("%Y-%m-%d"),
             :CompanyCode => "REVELRYLABSDEV",         #TODO
             :Client => "AvaTaxSample",                #TODO
-            :DocCode => "INV001",                     #TODO
+            :DocCode => "INV"+order.number,
             :DetailLevel => "Tax",
             :Commit => false,
             :DocType => "SalesInvoice",
-           
+
             :Addresses => [ mock_distribution_center_address, avalara_order_shipping_address ],
             :Lines => lines
           }
@@ -179,12 +221,12 @@ module Weblinc
             puts "MRA" + getTaxResult["ResultCode"]
             getTaxResult["Messages"].each { |message| puts "MRA :",message["Summary"] }
           else
-            getTaxResult["TaxLines"].each do |taxLine| 
-              avalara_assign_item_tax(taxLine) 
+            getTaxResult["TaxLines"].each do |taxLine|
+              avalara_assign_tax(taxLine)
             end
           end
 
-          getTaxResult 
+          getTaxResult
         end
 
       end
