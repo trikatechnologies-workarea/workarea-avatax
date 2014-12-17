@@ -21,11 +21,6 @@ module Weblinc
 #            assign_item_tax(item)
 #          end
 
-puts "MRA [adjust:#{__LINE__}] order.shipping_address: ",order.shipping_address.inspect
-puts "MRA [adjust:#{__LINE__}] order.user_id: ",order.user_id
-puts "MRA [adjust:#{__LINE__}] order.name: ",order.name
-puts "MRA [adjust:#{__LINE__}] order.number: ",order.number
-puts "MRA [adjust:#{__LINE__}] order.email: ",order.email
            avalara_with_fake_data
 
 
