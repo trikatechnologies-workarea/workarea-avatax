@@ -21,11 +21,7 @@ module Weblinc
 #            assign_item_tax(item)
 #          end
 
-order.items.each do |item|
-puts "MRA [avalara_tax_calculator.rb:#{__LINE__}]\nitem.price_adjustments.discounts: ",
-item.price_adjustments.discounts.inspect
            avalara_with_fake_data
-end
 
 
 #          assign_shipping_tax if order.shipping_method.present?
@@ -34,43 +30,33 @@ end
         private
 
         def assign_item_tax(item)   #NOT CALLED, for reference
-#100/0
+100/0
           item_tax_total = 0.to_m
 
 	  discount_adjustments = item.price_adjustments.discounts
-puts "MRA #{__LINE__} discount_adjustments: ",discount_adjustments.inspect
 
           item.price_adjustments.each do |adjustment|
-puts "MRA #{__LINE__} adjustments: ",adjustment.inspect
           end
 
           taxable_adjustments = item.price_adjustments.reject do |adjustment|
             adjustment.discount? || adjustment.data['tax_code'].blank?
           end
-puts "MRA #{__LINE__} taxable_adjustments: ",taxable_adjustments.inspect
 
           discount_total = discount_adjustments.sum(&:amount).to_m.abs
-puts "MRA #{__LINE__} discount_total: ",discount_total.inspect
           taxable_total = taxable_adjustments.sum(&:amount).to_m
-puts "MRA #{__LINE__} taxable_total: ",taxable_total.inspect
 
           taxable_adjustments.each do |adjustment|
             discount_share = adjustment.amount / taxable_total
-puts "MRA #{__LINE__} discount_share: ",discount_share.inspect
             discount_amount = discount_total * discount_share
-puts "MRA #{__LINE__} discount_amount: ",discount_amount.inspect
             taxable_amount = adjustment.amount - discount_amount
-puts "MRA #{__LINE__} taxable_amount: ",taxable_amount.inspect
 
             rate = Tax.find_rate(
               adjustment.data['tax_code'],
               taxable_amount,
               order.shipping_address
             )
-puts "MRA #{__LINE__} rate: ",rate.inspect
 
             item_tax_total += taxable_amount * rate.percentage
-puts "MRA #{__LINE__} item_tax_total: ",item_tax_total.inspect
           end
 
 #          if item_tax_total > 0
@@ -180,12 +166,10 @@ puts "MRA #{__LINE__} item_tax_total: ",item_tax_total.inspect
               lines << discount_line
             end
           end
-puts "MRA #{__LINE__} lines: ",lines.inspect
           lines
         end
 
         def avalara_line_from_item(item,index)
-assign_item_tax(item) #MRA
           line = {
             :LineNo => index,
             :ItemCode => item.sku,
@@ -211,9 +195,7 @@ assign_item_tax(item) #MRA
           end
         end
 
-        def avalara_assign_item_tax(taxLine)
-          idx = taxLine["LineNo"].to_i
-          tax = taxLine["Tax"].to_f
+        def avalara_adjust_item_tax(tax,idx)
           if tax > 0
             item = order.items[idx]
             item.adjust_pricing(
@@ -223,6 +205,13 @@ assign_item_tax(item) #MRA
               amount: tax
             )
           end
+        end
+
+        def avalara_assign_item_tax(taxLine)
+          idx = taxLine["LineNo"].to_i
+          @itemTax[idx]=0 if @itemTax[idx].nil?
+          tax = taxLine["Tax"].to_f
+          @itemTax[idx] += tax
         end
 
         def avalara_assign_tax(taxLine)
@@ -257,10 +246,7 @@ assign_item_tax(item) #MRA
 	def avalara_with_fake_data
           lines = []
           order.items.each_with_index do |item, index|
-            item_lines = avalara_lines_from_item(item, index)
-            lines += item_lines
-puts "MRA #{__LINE__} lines: ",lines.inspect
-#            lines << avalara_line_from_item(item, index)
+            lines += avalara_lines_from_item(item, index)
           end
           order.shipping_method.price_adjustments.each_with_index do |adjustment, index|
             lines << avalara_line_from_shipping_adjustment(adjustment,index)
@@ -279,7 +265,6 @@ puts "MRA #{__LINE__} lines: ",lines.inspect
             :Addresses => [ mock_distribution_center_address, avalara_order_shipping_address ],
             :Lines => lines
           }
-pp("MRA #{__LINE__} getTaxRequest: ",getTaxRequest.inspect)
           getTaxResult = AvaTax::TaxService.new.get(getTaxRequest)
 
           if getTaxResult["ResultCode"] != "Success"
@@ -287,9 +272,12 @@ pp("MRA #{__LINE__} getTaxRequest: ",getTaxRequest.inspect)
             puts "MRA" + getTaxResult["ResultCode"]
             getTaxResult["Messages"].each { |message| puts "MRA :",message["Summary"] }
           else
+            @itemTax=[]
             getTaxResult["TaxLines"].each do |taxLine|
-pp("MRA #{__LINE__} taxLine: ",taxLine.inspect)
               avalara_assign_tax(taxLine)
+            end
+            @itemTax.each_with_index do |tax,index|
+              avalara_adjust_item_tax(tax,index)
             end
           end
 
