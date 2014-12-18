@@ -17,80 +17,11 @@ module Weblinc
         def adjust
           return unless order.shipping_address.present?
 
-#          taxable_items.each do |item|
-#            assign_item_tax(item)
-#          end
-
            avalara_with_fake_data
 
-
-#          assign_shipping_tax if order.shipping_method.present?
         end
 
         private
-
-        def assign_item_tax(item)   #NOT CALLED, for reference
-100/0
-          item_tax_total = 0.to_m
-
-	  discount_adjustments = item.price_adjustments.discounts
-
-          item.price_adjustments.each do |adjustment|
-          end
-
-          taxable_adjustments = item.price_adjustments.reject do |adjustment|
-            adjustment.discount? || adjustment.data['tax_code'].blank?
-          end
-
-          discount_total = discount_adjustments.sum(&:amount).to_m.abs
-          taxable_total = taxable_adjustments.sum(&:amount).to_m
-
-          taxable_adjustments.each do |adjustment|
-            discount_share = adjustment.amount / taxable_total
-            discount_amount = discount_total * discount_share
-            taxable_amount = adjustment.amount - discount_amount
-
-            rate = Tax.find_rate(
-              adjustment.data['tax_code'],
-              taxable_amount,
-              order.shipping_address
-            )
-
-            item_tax_total += taxable_amount * rate.percentage
-          end
-
-#          if item_tax_total > 0
-#            item.adjust_pricing(
-#              price: 'tax',
-#              calculator: self.class.name,
-#              description: 'Tax',
-#              amount: item_tax_total
-#            )
-#          end
-        end
-
-        def assign_shipping_tax
-          return unless shipping_total > 0
-
-          tax_rate = Tax.find_rate(
-            order.shipping_method.tax_code,
-            shipping_total,
-            order.shipping_address
-          )
-
-          return unless tax_rate.charge_on_shipping?
-
-          amount = shipping_total * tax_rate.percentage
-
-          if amount > 0
-            order.shipping_method.adjust_pricing(
-              price: 'tax',
-              calculator: self.class.name,
-              description: 'Tax',
-              amount: amount
-            )
-          end
-        end
 
         def avalara_tax_code(item)
           weblinc_tax_code =item.price_adjustments.inject("") do |tax_code, adjustment|
@@ -167,20 +98,6 @@ module Weblinc
             end
           end
           lines
-        end
-
-        def avalara_line_from_item(item,index)
-          line = {
-            :LineNo => index,
-            :ItemCode => item.sku,
-            :Qty => item.quantity,
-            :Amount => item.total_price_cents/100,
-            :OriginCode => "01",
-            :DestinationCode => "02",
-            # Best Practice Request Parameters
-            # :Description => "Red Size 7 Widget",
-            :TaxCode => avalara_tax_code(item)
-          }
         end
 
         def avalara_assign_shipping_tax(taxLine)
