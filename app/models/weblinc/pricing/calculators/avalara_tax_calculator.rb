@@ -71,12 +71,8 @@ module Weblinc
         end
 
         def distribution_address
-          {                                 # TODO: Hard coded Distribution Center
-            :AddressCode => Weblinc::Avatax::DEFAULT_ORIGIN_CODE,
-            :Line1 => "4820 Banks Street",
-            :City => "New Orleans",
-            :Region => "LA",
-          }
+          dist_center = { AddressCode: Weblinc::Avatax::DEFAULT_ORIGIN_CODE }
+          dist_center.merge(Weblinc::Avatax.config.dist_center)
         end
 
         def shipping_address
