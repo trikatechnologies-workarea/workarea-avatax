@@ -77,13 +77,13 @@ module Weblinc
 
         def shipping_address
           {
-            :AddressCode => Weblinc::Avatax::DEFAULT_DEST_CODE,
-            :Line1 => order.shipping_address.street,
-            :Line2 => order.shipping_address.street_2,
-            :City => order.shipping_address.city,
-            :Region => order.shipping_address.region,
-            :Country => order.shipping_address.country,
-            :PostalCode => order.shipping_address.postal_code
+            AddressCode: Weblinc::Avatax::DEFAULT_DEST_CODE,
+            Line1: order.shipping_address.street,
+            Line2: order.shipping_address.street_2,
+            City: order.shipping_address.city,
+            Region: order.shipping_address.region,
+            Country: order.shipping_address.country,
+            PostalCode: order.shipping_address.postal_code
           }
         end
 
@@ -99,13 +99,13 @@ module Weblinc
           shipping_total = order.shipping_method.price_adjustments.sum
 
           {
-            :LineNo => "SHIPPING",
-            :ItemCode => "SHIPPING",
-            :Description => order.shipping_method.name,
-            :Qty => 1,
-            :Amount => shipping_total.to_s,
-            :OriginCode => Weblinc::Avatax::DEFAULT_ORIGIN_CODE,
-            :DestinationCode => Weblinc::Avatax::DEFAULT_DEST_CODE
+            LineNo: "SHIPPING",
+            ItemCode: "SHIPPING",
+            Description: order.shipping_method.name,
+            Qty: 1,
+            Amount: shipping_total.to_s,
+            OriginCode: Weblinc::Avatax::DEFAULT_ORIGIN_CODE,
+            DestinationCode: Weblinc::Avatax::DEFAULT_DEST_CODE
           }
         end
       end

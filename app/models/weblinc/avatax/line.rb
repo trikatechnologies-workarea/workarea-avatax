@@ -36,16 +36,16 @@ module Weblinc
       def to_request
         {
           # Required Parameters
-          :LineNo => @line_no,
-          :ItemCode => @item.sku,
-          :Qty => @item.quantity,
-          :Amount => share_amount.to_s,
-          :OriginCode => Weblinc::Avatax::DEFAULT_ORIGIN_CODE,
-          :DestinationCode => Weblinc::Avatax::DEFAULT_DEST_CODE,
+          LineNo: @line_no,
+          ItemCode: @item.sku,
+          Qty: @item.quantity,
+          Amount: share_amount.to_s,
+          OriginCode: Weblinc::Avatax::DEFAULT_ORIGIN_CODE,
+          DestinationCode: Weblinc::Avatax::DEFAULT_DEST_CODE,
 
           # Best Practice Request Parameters
-          :Description => description,
-          :TaxCode => tax_code,
+          Description: description,
+          TaxCode: tax_code
         }
       end
     end
