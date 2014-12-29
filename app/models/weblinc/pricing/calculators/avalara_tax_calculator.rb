@@ -40,7 +40,7 @@ module Weblinc
           if getTaxResult["ResultCode"] == "Success"
             lines_shipping = getTaxResult['TaxLines']
               .select { |l| l['LineNo'] == 'SHIPPING' }
-            lines_items = getTaxResult['TaxLines'] - lines[:shipping]
+            lines_items = getTaxResult['TaxLines'] - lines_shipping
 
             lines_items.each do |line|
               line_index = line['LineNo'].to_i
