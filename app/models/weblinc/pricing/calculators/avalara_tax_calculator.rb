@@ -25,7 +25,7 @@ module Weblinc
           request = {
             :CustomerCode => order.email,             #TODO ?email > 50Chars?
             :DocDate => Time.now.strftime("%Y-%m-%d"),
-            :CompanyCode => "REVELRYLABSDEV", # TODO: set from admin or config
+            :CompanyCode => Weblinc::Avatax.config.company_code,
             :Client => "WEBLINC",
             :DocCode => "INV #{order.number}",
             :DetailLevel => "Tax",
