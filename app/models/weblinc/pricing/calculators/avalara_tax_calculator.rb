@@ -16,141 +16,72 @@ module Weblinc
 
         def adjust
           return unless order.shipping_address.present?
-
-           avalara_with_fake_data
-
+          getAvatax
         end
 
         private
 
-        def avalara_tax_code(item)
-          weblinc_tax_code =item.price_adjustments.inject("") do |tax_code, adjustment|
-            tax_code + String(adjustment.data['tax_code'])
-          end
-          case weblinc_tax_code
-          when ""
-            tax_code = 'NT'
-          when "001"
-            tax_code = 'P0000000'
-          else
-            tax_code = weblinc_tax_code    #TODO
-           end
-
-           tax_code
-        end
-
-        def avalara_line_from_shipping_adjustment(adjustment,index)
-          line = {
-            :LineNo => "FR_"+index.to_s,
-            :ItemCode => 'shipping',
-            :Qty => adjustment.quantity,
-            :Amount => adjustment.amount_cents/100,
-            :OriginCode => "01",
-            :DestinationCode => "02",
-            :Description => adjustment.description,
-            :TaxCode => 'FR'   #TODO what if data_code not "001"
+        def getAvatax
+          request = {
+            :CustomerCode => order.email,             #TODO ?email > 50Chars?
+            :DocDate => Time.now.strftime("%Y-%m-%d"),
+            :CompanyCode => "REVELRYLABSDEV", # TODO: set from admin or config
+            :Client => "WEBLINC",
+            :DocCode => "INV #{order.number}",
+            :DetailLevel => "Tax",
+            :Commit => false,
+            :DocType => "SalesInvoice",
+            :Addresses => [ distribution_address, shipping_address ],
+            :Lines => item_lines.push(shipping_line)
           }
-        end
 
-        def avalara_lines_from_item(item,index)
-          lines = []
-          discount_adjustments = item.price_adjustments.discounts
-          item.price_adjustments.each do |adjustment|
-          end
+          getTaxResult = AvaTax::TaxService.new.get(request)
 
-          taxable_adjustments = item.price_adjustments.reject do |adjustment|
-            adjustment.discount? || adjustment.data['tax_code'].blank?
-          end
+          if getTaxResult["ResultCode"] == "Success"
+            lines_shipping = getTaxResult['TaxLines']
+              .select { |l| l['LineNo'] == 'SHIPPING' }
+            lines_items = getTaxResult['TaxLines'] - lines[:shipping]
 
-          discount_total = discount_adjustments.sum(&:amount).to_m.abs
-          taxable_total = taxable_adjustments.sum(&:amount).to_m
-
-          taxable_adjustments.each_with_index do |adjustment,adjustment_index|
-            discount_share = adjustment.amount / taxable_total
-            discount_amount = discount_total * discount_share
-            taxable_amount = adjustment.amount - discount_amount
-            tax_code = avalara_tax_code(item)
-            line = {
-              :LineNo => "#{index}-#{adjustment_index}",
-              :ItemCode => item.sku,
-              :Qty => item.quantity,
-              :Amount => item.total_price_cents/100,
-              :OriginCode => "01",
-              :DestinationCode => "02",
-              # Best Practice Request Parameters
-              # :Description => "Red Size 7 Widget",
-              :TaxCode => tax_code
-            }
-            lines << line
-            discount_adjustments.each_with_index do |discount_adjustment,da_index| 
-              discount_adjustment_amount = (discount_adjustment.amount_cents/100)*discount_share
-              discount_line = {
-                :LineNo => "#{index}-#{adjustment_index}-#{da_index.to_s}",
-                :ItemCode => item.sku,  
-                :Qty => discount_adjustment.quantity,
-                :Amount => discount_adjustment_amount,
-                :OriginCode => "01",
-                :DestinationCode => "02",
-                :Description =>  discount_adjustment.description,
-                :TaxCode => tax_code
-              }
-              lines << discount_line
+            lines_items.each do |line|
+              line_index = line['LineNo'].to_i
+              item = order.items[line_index]
+              item.adjust_pricing(
+                price: 'tax',
+                calculator: self.class.name,
+                description: 'Sales Tax',
+                amount: line['Tax'].to_m
+              )
             end
-          end
-          lines
-        end
 
-        def avalara_assign_shipping_tax(taxLine)
-          tax = taxLine["Tax"].to_f
-          if tax > 0
-            order.shipping_method.adjust_pricing(
-              price: 'tax',
-              calculator: self.class.name,
-              description: 'Tax',
-              amount: tax
-            )
-          end
-        end
-
-        def avalara_adjust_item_tax(tax,idx)
-          if tax > 0
-            item = order.items[idx]
-            item.adjust_pricing(
-              price: 'tax',
-              calculator: self.class.name,
-              description: 'Tax',
-              amount: tax
-            )
-          end
-        end
-
-        def avalara_assign_item_tax(taxLine)
-          idx = taxLine["LineNo"].to_i
-          @itemTax[idx]=0 if @itemTax[idx].nil?
-          tax = taxLine["Tax"].to_f
-          @itemTax[idx] += tax
-        end
-
-        def avalara_assign_tax(taxLine)
-          if (taxLine["LineNo"].index('FR_') == 0)
-            avalara_assign_shipping_tax(taxLine)
+            lines_shipping.each do |line|
+              order.shipping_method.adjust_pricing(
+                price: 'tax',
+                calculator: self.class.name,
+                description: 'Sales Tax',
+                amount: line['Tax'].to_m
+              )
+            end
           else
-            avalara_assign_item_tax(taxLine)
+            # TODO What to do if service is unavailable or we just be broken
+            puts "MRA" + getTaxResult["ResultCode"]
+            getTaxResult["Messages"].each { |message| puts "MRA :",message["Summary"] }
           end
+
+          getTaxResult
         end
 
-        def mock_distribution_center_address
+        def distribution_address
           {                                 # TODO: Hard coded Distribution Center
-            :AddressCode => "01",
+            :AddressCode => Weblinc::Avatax::DEFAULT_ORIGIN_CODE,
             :Line1 => "4820 Banks Street",
             :City => "New Orleans",
             :Region => "LA",
           }
         end
 
-	def avalara_order_shipping_address
+        def shipping_address
           {
-            :AddressCode => "02",
+            :AddressCode => Weblinc::Avatax::DEFAULT_DEST_CODE,
             :Line1 => order.shipping_address.street,
             :Line2 => order.shipping_address.street_2,
             :City => order.shipping_address.city,
@@ -160,47 +91,36 @@ module Weblinc
           }
         end
 
-	def avalara_with_fake_data
-          lines = []
-          order.items.each_with_index do |item, index|
-            lines += avalara_lines_from_item(item, index)
-          end
-          order.shipping_method.price_adjustments.each_with_index do |adjustment, index|
-            lines << avalara_line_from_shipping_adjustment(adjustment,index)
-          end
+        def order_discount
+          @discount_cents ||= order.price_adjustments.discounts
+            .select { |d| d.calculator == Weblinc::Pricing::Discounts::OrderTotal }
+            .inject() { |sum, d| sum += d.amount_cents }
+            .abs
 
-          getTaxRequest = {
-            :CustomerCode => order.email,             #TODO ?email > 50Chars?
-            :DocDate => Time.now.strftime("%Y-%m-%d"),
-            :CompanyCode => "REVELRYLABSDEV",         #TODO
-            :Client => "AvaTaxSample",                #TODO
-            :DocCode => "INV"+order.number,
-            :DetailLevel => "Tax",
-            :Commit => false,
-            :DocType => "SalesInvoice",
-
-            :Addresses => [ mock_distribution_center_address, avalara_order_shipping_address ],
-            :Lines => lines
-          }
-          getTaxResult = AvaTax::TaxService.new.get(getTaxRequest)
-
-          if getTaxResult["ResultCode"] != "Success"
-            # TODO What to do if service is unavailable or we just be broken
-            puts "MRA" + getTaxResult["ResultCode"]
-            getTaxResult["Messages"].each { |message| puts "MRA :",message["Summary"] }
-          else
-            @itemTax=[]
-            getTaxResult["TaxLines"].each do |taxLine|
-              avalara_assign_tax(taxLine)
-            end
-            @itemTax.each_with_index do |tax,index|
-              avalara_adjust_item_tax(tax,index)
-            end
-          end
-
-          getTaxResult
+          @discount_cents/100
         end
 
+        def item_lines
+          lines = order.items.flat_map.with_index do |item, index|
+            Weblinc::Avatax::LineFactory.make_item_lines(item, index)
+          end
+
+          lines.as_json # get a hash representation
+        end
+
+        def shipping_line
+          shipping_total = order.shipping_method.price_adjustments.sum
+
+          {
+            :LineNo => "SHIPPING",
+            :ItemCode => "SHIPPING",
+            :Description => order.shipping_method.name,
+            :Qty => 1,
+            :Amount => shipping_total.to_s,
+            :OriginCode => Weblinc::Avatax::DEFAULT_ORIGIN_CODE,
+            :DestinationCode => Weblinc::Avatax::DEFAULT_DEST_CODE
+          }
+        end
       end
     end
   end
