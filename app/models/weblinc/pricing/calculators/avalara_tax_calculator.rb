@@ -91,15 +91,6 @@ module Weblinc
           }
         end
 
-        def order_discount
-          @discount_cents ||= order.price_adjustments.discounts
-            .select { |d| d.calculator == Weblinc::Pricing::Discounts::OrderTotal }
-            .inject() { |sum, d| sum += d.amount_cents }
-            .abs
-
-          @discount_cents/100
-        end
-
         def item_lines
           lines = order.items.flat_map.with_index do |item, index|
             Weblinc::Avatax::LineFactory.make_item_lines(item, index)
