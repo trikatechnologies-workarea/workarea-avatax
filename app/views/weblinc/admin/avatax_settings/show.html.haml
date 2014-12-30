@@ -15,7 +15,7 @@
           .wl-property
             = label_tag "boosts[#{field}]", nil, class: 'name' do
               %span.text= field.to_s.titleize
-            .wl-value= text_field_tag "boosts[#{field}]", value, class: 'wl-text-box--mini'
+            .wl-value= text_field_tag "boosts[#{field}]", value, class: 'wl-text-box'
 
     .wl-panel--buttons
       .wl-action-group
