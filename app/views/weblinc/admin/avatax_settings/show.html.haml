@@ -1,0 +1,23 @@
+- @title = ['Search Settings']
+
+.wl-search-settings-view.wl-view
+
+  %h1 AvaTax Settings
+
+  = form_tag search_settings_url, method: :patch do
+
+    .wl-tabs
+
+      .wl-section
+        %h2 Account Info
+        %p Text Text Text
+        - @boosts.each do |field, value|
+          .wl-property
+            = label_tag "boosts[#{field}]", nil, class: 'name' do
+              %span.text= field.to_s.titleize
+            .wl-value= text_field_tag "boosts[#{field}]", value, class: 'wl-text-box--mini'
+
+    .wl-panel--buttons
+      .wl-action-group
+        %p= link_to 'Cancel', :back, class: 'wl-text-button--muted'
+        %p= button_tag 'Save Changes', value: 'save_settings', class: 'wl-button'
