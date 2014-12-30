@@ -1,7 +1,7 @@
 module Weblinc
   class Admin::AvataxSettingsController < Admin::ApplicationController
     def show
-       @settings = hash_from_fields
+       @settings = settings_hash
     end
 
     def update
@@ -13,16 +13,20 @@ module Weblinc
 
      private
  
-     def fields
-       [ :account_number, :license_key, :service_url, :company_code ]
+     def ignore_fields
+       ["_id","deleted_at","site_id"]
      end
 
-     def hash_from_fields
-       settings = Weblinc::Avatax::Setting.current
-       fields.inject({}) do |result, key|
-         result[key] = settings[key]
-         result
-       end
+     def setting
+       @setting ||= Weblinc::Avatax::Setting.current
+     end 
+
+     def fields
+       settings_hash.keys
+     end
+
+     def settings_hash
+       setting.attributes.reject{|k,v| k.in?(ignore_fields)}
      end
 
      def setting_params
