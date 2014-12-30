@@ -1,35 +1,32 @@
 module Weblinc
   class Admin::AvataxSettingsController < Admin::ApplicationController
     def show
-#      @boosts   = Search::Index.current.boosts
-       @boosts   = { 
-        "Account Number" => "bar", 
-        "License Key"    => "garble", 
-        "Service URL"    => "http://www.jahoo.com", 
-        "Company Code"   => "REVELRYLABDEV", 
-       }
+       @settings = hash_from_fields
     end
 
     def update
-#      Search::Index.current.update_settings(
-#        rewrites: rewrites_to_save,
-#        synonyms: params[:synonyms],
-#        boosts: params[:boosts]
-#      )
-#
-#      flash[:success] = 'Search settings have been saved.'
-#      redirect_to search_settings_path
+      Weblinc::Avatax::Setting.current.update_attributes(setting_params)
+
+      flash[:success] = 'AvaTax settings have been saved.'
+      redirect_to avatax_settings_path
     end
 
-    private
+     private
+ 
+     def fields
+       [ :account_number, :license_key, :service_url, :company_code ]
+     end
 
-    def new_rewrites
-    end
+     def hash_from_fields
+       settings = Weblinc::Avatax::Setting.current
+       fields.inject({}) do |result, key|
+         result[key] = settings[key]
+         result
+       end
+     end
 
-    def new_and_original_rewrites
-    end
-
-    def rewrites_to_save
-    end
+     def setting_params
+      params.require(:settings).permit(fields)
+     end
   end
 end

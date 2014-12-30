@@ -1,21 +1,21 @@
-- @title = ['Search Settings']
+- @title = ['AvaTax Settings']
 
 .wl-search-settings-view.wl-view
 
   %h1 AvaTax Settings
 
-  = form_tag search_settings_url, method: :patch do
+  = form_tag avatax_settings_url, method: :patch do
 
     .wl-tabs
 
       .wl-section
         %h2 Account Info
         %p Text Text Text
-        - @boosts.each do |field, value|
+        - @settings.each do |field, value|
           .wl-property
-            = label_tag "boosts[#{field}]", nil, class: 'name' do
+            = label_tag "settings[#{field}]", nil, class: 'name' do
               %span.text= field.to_s.titleize
-            .wl-value= text_field_tag "boosts[#{field}]", value, class: 'wl-text-box'
+            .wl-value= text_field_tag "settings[#{field}]", value, class: 'wl-text-box'
 
     .wl-panel--buttons
       .wl-action-group
