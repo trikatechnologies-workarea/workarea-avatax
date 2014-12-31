@@ -20,9 +20,29 @@ module Weblinc
       def self.current
         find_or_create_by_id(Site.current.id)
       end
+   
+      def apply_settings
+        settings = self  
+        AvaTax.configure do 
+          account_number settings.account_number
+          license_key    settings.license_key
+	  service_url    settings.service_url
+        end
+      end
 
-      # private
+      def settings_edit_hash
+        setting.attributes.reject{|k,v| k.in?(ignore_fields)}
+      end
 
+      private
+
+        def ignore_fields
+          ["_id","deleted_at","site_id"]
+        end
+
+        def setting
+          @setting ||= self.class.current
+        end
     end
   end
 end

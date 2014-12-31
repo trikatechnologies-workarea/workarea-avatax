@@ -1,0 +1,25 @@
+- @title = ['AvaTax Test Connection']
+
+.wl-search-settings-view.wl-view
+
+  %h1 AvaTax Test Connection
+
+  = form_tag avatax_test_connection_url, method: :patch do
+
+    .wl-tabs
+
+      .wl-section
+        %h2 Test Connection
+        %p Text Text Text
+        - @settings.each do |field, value|
+          .wl-property
+            = label_tag "settings[#{field}]", nil, class: 'name' do
+              %span.text= field.to_s.titleize
+            %br
+            %span.text= value.to_s 
+
+    .wl-panel--buttons
+      .wl-action-group
+        %p= link_to 'Cancel', :back, class: 'wl-text-button--muted'
+        %p= link_to 'Edit Settings', avatax_settings_url, class: 'wl-text-button--muted'
+        %p= button_tag 'Test Connection', value: 'save_settings', class: 'wl-button'
