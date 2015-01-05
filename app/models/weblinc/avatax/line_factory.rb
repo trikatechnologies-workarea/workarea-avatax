@@ -25,9 +25,8 @@ module Weblinc
         taxable_adjustments = get_taxable_adjustments(item)
 
         # for each discount on an item we need to make a line for each of the
-        # taxable ajustments, reflecting that adjustment's share of the discount?
-        # because each taxable adjustment can have its own tax code?
-        # TODO: clarify and remove question marks
+        # taxable ajustments, reflecting that adjustment's share of the discount.
+        # because each taxable adjustment can have its own tax code.
         discounts.flat_map.with_index do |discount, disc_index|
           line_no_suffix = "DISCOUNT-#{disc_index}"
           taxable_total = taxable_adjustments.sum(&:amount)
