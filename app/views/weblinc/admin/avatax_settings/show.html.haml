@@ -11,7 +11,13 @@
       .wl-section
         %h2 Account Info
         %p Text Text Text
-        - @settings.each do |field, value|
+        - @settings_drop.each do |field, options_hash|
+          .wl-property
+            = label_tag "settings[#{field}]", nil, class: 'name' do
+              %span.text= field.to_s.titleize
+            .wl-value= select_tag "settings[#{field}]", 
+              options_for_select(options_hash[:container],selected: options_hash[:selected])
+        - @settings_text.each do |field, value|
           .wl-property
             = label_tag "settings[#{field}]", nil, class: 'name' do
               %span.text= field.to_s.titleize

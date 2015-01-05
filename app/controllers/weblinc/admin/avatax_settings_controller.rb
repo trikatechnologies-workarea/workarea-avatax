@@ -1,7 +1,8 @@
 module Weblinc
   class Admin::AvataxSettingsController < Admin::ApplicationController
     def show
-       @settings = Weblinc::Avatax::Setting.current.settings_edit_hash
+       @settings_text = Weblinc::Avatax::Setting.current.settings_edit_text_hash
+       @settings_drop = Weblinc::Avatax::Setting.current.settings_edit_drop_hash
     end
 
     def update
