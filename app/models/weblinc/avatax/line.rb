@@ -1,10 +1,5 @@
 module Weblinc
   module Avatax
-    TAX_CODE_MAP = {
-      '' => 'NT',
-      '001' => 'P0000000'
-    }
-
     class Line
       attr_accessor :item
 
@@ -17,8 +12,7 @@ module Weblinc
       end
 
       def tax_code
-        weblinc_tax_code = @adjustment.data['tax_code']
-        TAX_CODE_MAP[weblinc_tax_code]
+        @adjustment.data['tax_code']
       end
 
       def description
