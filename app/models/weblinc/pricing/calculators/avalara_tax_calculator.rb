@@ -62,9 +62,8 @@ module Weblinc
               )
             end
           else
-            # TODO What to do if service is unavailable or we just be broken
-            puts "MRA" + getTaxResult["ResultCode"]
-            getTaxResult["Messages"].each { |message| puts "MRA :",message["Summary"] }
+            Rails.logger.error "AvaTax getTax call Failed: " + result["ResultCode"]
+            result["Messages"].each { |message| Rails.logger.error message["Summary"] }
           end
 
           getTaxResult
