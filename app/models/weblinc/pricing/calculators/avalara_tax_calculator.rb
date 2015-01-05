@@ -23,7 +23,7 @@ module Weblinc
 
         def get_avatax
           request = {
-            :CustomerCode => order.email,             #TODO ?email > 50Chars?
+            :CustomerCode => order.email.truncate(50, omission: ''),
             :DocDate => Time.now.strftime("%Y-%m-%d"),
             :CompanyCode => Weblinc::Avatax.config.company_code,
             :Client => "WEBLINC",
