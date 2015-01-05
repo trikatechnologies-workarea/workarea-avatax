@@ -12,7 +12,13 @@ module Weblinc
       end
 
       def tax_code
-        @adjustment.data['tax_code']
+        # if the tax code isn't blank return it, otherwise return NT to represent
+        # non-taxable items
+        if @adjustment.data['tax_code'].present?
+          @adjustment.data['tax_code']
+        else
+          'NT'
+        end
       end
 
       def description
