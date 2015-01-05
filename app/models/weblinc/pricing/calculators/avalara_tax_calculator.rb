@@ -16,12 +16,12 @@ module Weblinc
 
         def adjust
           return unless order.shipping_address.present?
-          getAvatax
+          get_avatax
         end
 
         private
 
-        def getAvatax
+        def get_avatax
           request = {
             :CustomerCode => order.email,             #TODO ?email > 50Chars?
             :DocDate => Time.now.strftime("%Y-%m-%d"),
@@ -35,12 +35,12 @@ module Weblinc
             :Lines => item_lines.push(shipping_line)
           }
 
-          getTaxResult = AvaTax::TaxService.new.get(request)
+          result = AvaTax::TaxService.new.get(request)
 
-          if getTaxResult["ResultCode"] == "Success"
-            lines_shipping = getTaxResult['TaxLines']
+          if result["ResultCode"] == "Success"
+            lines_shipping = result['TaxLines']
               .select { |l| l['LineNo'] == 'SHIPPING' }
-            lines_items = getTaxResult['TaxLines'] - lines_shipping
+            lines_items = result['TaxLines'] - lines_shipping
 
             lines_items.each do |line|
               line_index = line['LineNo'].to_i
@@ -66,7 +66,7 @@ module Weblinc
             result["Messages"].each { |message| Rails.logger.error message["Summary"] }
           end
 
-          getTaxResult
+          result
         end
 
         def distribution_address
