@@ -1,0 +1,6 @@
+%tr
+  %th AvaTax Settings
+  %td= check_box_tag 'permissions[avatax_settings][view]', true, @permissions.authorized_to?(:view, :avatax_settings), title: 'AvaTax Settings: View'
+  %td -
+  %td= check_box_tag 'permissions[avatax_settings][edit]', true, @permissions.authorized_to?(:edit, :avatax_settings), title: 'AvaTax Settings: Edit'
+  %td -

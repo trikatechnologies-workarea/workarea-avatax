@@ -10,6 +10,9 @@ module Weblinc
         Weblinc::Admin.config.views.settings_menu.append(
           'weblinc/admin/menus/avatax_settings'
         )
+        Weblinc::Admin.config.views.user_permissions.append(
+          'weblinc/admin/users/avatax_settings'
+        )
       end
     end
   end
