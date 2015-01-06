@@ -1,5 +1,5 @@
 module Weblinc
-  class Admin::AvataxTestConnectionsController < Admin::ApplicationController
+  class Admin::Avatax::TestConnectionsController < Admin::ApplicationController
     def show
       current_settings = Weblinc::Avatax::Setting.current
       current_settings.apply_settings
@@ -7,9 +7,9 @@ module Weblinc
       @settings = current_settings.settings_edit_hash
     end
 
-    def update
-      redirect_to avatax_test_connection_path
-    end
+    #def update
+    #  redirect_to avatax_test_connection_path
+    #end
 
     private
     def ping
