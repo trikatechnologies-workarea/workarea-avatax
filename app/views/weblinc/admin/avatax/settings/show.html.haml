@@ -10,7 +10,9 @@
 
       .wl-section
         %h2 Account Info
-        %p Text Text Text
+        %p Account Number: This is the account number that needs to be used to authenticate your API call (this is not an Admin Console login). It will be a ten-digit number (e.g. 1100012345)
+        %p License Key: This is the license key that needs to be set in the credentials portion of your connector (this is not an Admin Console Password). It will be a 16-character string (e.g. 1A2B3C4D5E6F7G8H).
+        %p Company Code: The code that identifies the company in the AvaTax account. This code is declared during the company setup in the AvaTax Admin Console.
         - @settings_drop.each do |field, options_hash|
           .wl-property
             = label_tag "settings[#{field}]", nil, class: 'name' do
