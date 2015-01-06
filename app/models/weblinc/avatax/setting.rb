@@ -30,42 +30,8 @@ module Weblinc
         end
       end
 
-      def settings_edit_hash
-        setting.attributes.reject{|k,v| k.in?(ignore_fields)}
-      end
-
-      def settings_edit_text_hash
-        setting.
-         attributes.
-         reject{|k,v| k.in?(ignore_fields)}.
-         reject{|k,v| k.in?(settings_drop_hash.keys)}
-      end
-
-      def settings_edit_drop_hash
-        settings_drop_hash
-      end
-
       private
 
-        def ignore_fields
-          ["_id","deleted_at","site_id"]
-        end
-
-        def setting
-          @setting ||= self.class.current
-        end
-
-        def settings_drop_hash
-          {
-            "service_url" => {
-              selected: setting["service_url"],
-              container: [ 
-                "https://development.avalara.net",   # development
-                "https://avatax.avalara.net"         # production
-              ]
-            }
-          }
-        end
     end
   end
 end

@@ -6,6 +6,14 @@ module Weblinc
       include Weblinc::Plugin
 
       isolate_namespace Weblinc::Avatax
+
+      Weblinc::Avatax.configure do |config|
+        config.valid_service_urls = [
+          "https://development.avalara.net",   # development
+          "https://avatax.avalara.net"         # production
+        ]
+      end
+
       initializer 'weblinc.avatax.templates' do
         Weblinc::Admin.config.views.settings_menu.append(
           'weblinc/admin/menus/avatax_settings'

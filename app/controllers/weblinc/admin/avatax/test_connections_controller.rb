@@ -4,14 +4,17 @@ module Weblinc
       current_settings = Weblinc::Avatax::Setting.current
       current_settings.apply_settings
       ping
-      @settings = current_settings.settings_edit_hash
+      @settings =
+        {
+          service_url:    current_settings[:service_url],
+          account_number: current_settings[:account_number],
+          license_key:    current_settings[:license_key],
+          company_code:   current_settings[:company_code]
+        }
     end
 
-    #def update
-    #  redirect_to avatax_test_connection_path
-    #end
-
     private
+
     def ping
       tax_svc = AvaTax::TaxService.new
       begin  # catch exception if service URL is not valid

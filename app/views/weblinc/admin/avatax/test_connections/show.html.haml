@@ -1,6 +1,6 @@
 - @title = ['AvaTax Test Connection']
 
-.wl-search-settings-view.wl-view
+.wl-avatax-test-connection-view.wl-view
 
   %h1 AvaTax Test Connection
 
@@ -33,4 +33,4 @@
     .wl-panel--buttons
       .wl-action-group
         %p= link_to 'Edit Settings', avatax_settings_url, class: 'wl-text-button--muted'
-        %p= button_tag 'Refresh', value: 'save_settings', class: 'wl-button'
+        %p= link_to 'Refresh', avatax_test_connection_url, class: 'wl-text-button--muted'
