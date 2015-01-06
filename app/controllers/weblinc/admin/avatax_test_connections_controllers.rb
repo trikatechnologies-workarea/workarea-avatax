@@ -17,15 +17,15 @@ module Weblinc
       begin  # catch exception if service URL is not valid
         pingResult = taxSvc.ping
         if pingResult["ResultCode"] == "Success"
-          @connection = {:status => 'Service Available', :errors => []}
+          @connection = {status: 'Service Available', errors: []}
         else
-          @connection = {:status => 'Errors'}
+          @connection = {status: 'Errors'}
           @connection[:errors] = pingResult["Messages"].collect { |message| message["Summary"] }
           flash[:error] = 'Failure'
         end
       rescue Exception => e  
         throw :mra
-        @connection = {:status => "Exception"}
+        @connection = {status: "Exception"}
         @connection[:errors] = [e.message]
         flash[:error] = 'Exception'
       end

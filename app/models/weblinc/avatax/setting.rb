@@ -58,8 +58,8 @@ module Weblinc
         def settings_drop_hash
           {
             "service_url" => {
-              :selected => setting["service_url"],
-              :container => [ 
+              selected: setting["service_url"],
+              container: [ 
                 "https://development.avalara.net",   # development
                 "https://avatax.avalara.net"         # production
               ]
