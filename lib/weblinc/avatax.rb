@@ -1,3 +1,4 @@
+require 'avatax'
 require 'weblinc'
 require 'weblinc/store_front'
 require 'weblinc/admin'
