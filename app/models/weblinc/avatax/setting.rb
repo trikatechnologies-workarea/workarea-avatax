@@ -28,6 +28,9 @@ module Weblinc
           license_key    settings.license_key
           service_url    settings.service_url
         end
+        Weblinc::Avatax.configure do |config|
+          config.company_code = settings.company_code
+        end
       end
 
       private
