@@ -13,9 +13,9 @@ module Weblinc
 
     private
     def ping
-      taxSvc = AvaTax::TaxService.new
+      tax_svc = AvaTax::TaxService.new
       begin  # catch exception if service URL is not valid
-        pingResult = taxSvc.ping
+        pingResult = tax_svc.ping
         if pingResult["ResultCode"] == "Success"
           @connection = {status: 'Service Available', errors: []}
         else
