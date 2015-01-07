@@ -8,5 +8,5 @@
   = label_tag 'user[customer_usage_type]', nil, class: 'name' do
     %span.text Avatax Entity/Use Code
   .wl-value
-    = select_tag 'user[customer_usage_type]', options_from_collection_for_select(Weblinc::Avatax::UsageType.all, 'code', 'name', @user.customer_usage_type), prompt: 'Select Entity/Use'
+    = select_tag 'user[customer_usage_type]', options_from_collection_for_select(Weblinc::Avatax::UsageType.all, 'code', 'name', @user.customer_usage_type), prompt: 'Not Applicable'
 
