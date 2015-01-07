@@ -18,21 +18,9 @@ module Weblinc
       end
 
       def self.current
-        find_or_create_by_id(Site.current.id)
+        @@current ||= find_or_create_by_id(Site.current.id)
       end
    
-      def apply_settings
-        settings = self  
-        AvaTax.configure do 
-          account_number settings.account_number
-          license_key    settings.license_key
-          service_url    settings.service_url
-        end
-        Weblinc::Avatax.configure do |config|
-          config.company_code = settings.company_code
-        end
-      end
-
       private
 
     end

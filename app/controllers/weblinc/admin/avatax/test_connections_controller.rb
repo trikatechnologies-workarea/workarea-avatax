@@ -2,7 +2,6 @@ module Weblinc
   class Admin::Avatax::TestConnectionsController < Admin::ApplicationController
     def show
       current_settings = Weblinc::Avatax::Setting.current
-      current_settings.apply_settings
       ping
       @settings =
         {
@@ -16,7 +15,7 @@ module Weblinc
     private
 
     def ping
-      tax_svc = AvaTax::TaxService.new
+      tax_svc = Weblinc::Avatax::TaxService.new
       begin  # catch exception if service URL is not valid
         pingResult = tax_svc.ping
         if pingResult["ResultCode"] == "Success"
@@ -27,7 +26,6 @@ module Weblinc
           flash[:error] = 'Failure'
         end
       rescue Exception => e  
-        throw :mra
         @connection = {status: "Exception"}
         @connection[:errors] = [e.message]
         flash[:error] = 'Exception'

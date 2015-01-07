@@ -9,7 +9,6 @@ module Weblinc
 
     def update
       Weblinc::Avatax::Setting.current.update_attributes(setting_params)
-      Weblinc::Avatax::Setting.current.apply_settings
 
       flash[:success] = 'AvaTax settings have been saved.'
       redirect_to avatax_settings_path
