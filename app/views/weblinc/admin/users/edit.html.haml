@@ -1,0 +1,308 @@
+- @title = ['Users', 'Edit']
+
+.wl-edit-user-view.wl-view
+  .wl-view-header--tabs
+    %h1 Edit User
+    = render 'weblinc/admin/shared/comments', commentable: @user
+
+  - if @user.errors.present?
+    = render 'weblinc/admin/shared/errors', errors: @user.errors
+
+  = form_tag user_url(@user), method: :patch, id: 'user_form' do
+
+    .wl-tabs
+
+      .wl-section
+        %h2 Properties
+        .wl-property
+          = label_tag 'user[first_name]', nil, class: 'name' do
+            %span.text First Name
+          .wl-value= text_field_tag 'user[first_name]', @user.first_name, class: 'wl-text-box'
+        .wl-property
+          = label_tag 'user[last_name]', nil, class: 'name' do
+            %span.text Last Name
+          .wl-value= text_field_tag 'user[last_name]', @user.last_name, class: 'wl-text-box'
+        .wl-property
+          = label_tag 'user[email]', nil, class: 'name' do
+            %span.text Email
+          .wl-value= email_field_tag 'user[email]', @user.email, class: 'wl-text-box'
+        .wl-property
+          = label_tag 'user[password]', nil, class: 'name' do
+            %span.text Password
+          .wl-value= password_field_tag 'user[password]', nil, class: 'wl-text-box'
+        .wl-property
+          = label_tag 'user[tag_list]', nil, class: 'tag-list' do
+            %span.text Tags
+          .wl-value
+            = text_field_tag 'user[tag_list]', @user.tag_list, class: 'wl-text-box'
+            %span.note Comma separated: just, like, this
+        .wl-property
+          = label_tag 'payment[store_credit]', nil, class: 'name' do
+            %span.text Store Credit
+          .wl-value
+            %span.prefix $
+            = text_field_tag 'payment[store_credit]', @payment.store_credit, class: 'wl-text-box--mini'
+
+        -# append additional form fields for user properties
+        = append('user_properties_fields', user: @user)
+
+      .wl-section
+        %h2 Permissions
+        .wl-button-property
+          .wl-value= check_box :user, :csr
+          = label_tag 'user[csr]', nil, class: 'name' do
+            %span.text User is a Customer Service Representative
+        .wl-button-property
+          .wl-value= check_box :user, :admin
+          = label_tag 'user[admin]', nil, class: 'name' do
+            %span.text User is a Site Administrator
+        %table.wl-table{ data: { permissions_table: '' } }
+          %thead
+            %tr
+              %td
+              %th View
+              %th Create
+              %th Edit
+              %th Remove
+          %tbody
+            %tr
+              %th Categories
+              %td= check_box_tag 'permissions[categories][view]', true, @permissions.authorized_to?(:view, :categories), title: 'Categories: View'
+              %td= check_box_tag 'permissions[categories][create]', true, @permissions.authorized_to?(:create, :categories), title: 'Categories: Create'
+              %td= check_box_tag 'permissions[categories][edit]', true, @permissions.authorized_to?(:edit, :categories), title: 'Categories: Edit'
+              %td= check_box_tag 'permissions[categories][destroy]', true, @permissions.authorized_to?(:destroy, :categories), title: 'Categories: Remove'
+            %tr
+              %th Content
+              %td= check_box_tag 'permissions[content][view]', true, @permissions.authorized_to?(:view, :content), title: 'Content: View'
+              %td= check_box_tag 'permissions[content][create]', true, @permissions.authorized_to?(:create, :content), title: 'Content: Create'
+              %td= check_box_tag 'permissions[content][edit]', true, @permissions.authorized_to?(:edit, :content), title: 'Content: Edit'
+              %td -
+            %tr
+              %th Content Assets
+              %td= check_box_tag 'permissions[content_assets][view]', true, @permissions.authorized_to?(:view, :content_assets), title: 'Content Assets: View'
+              %td= check_box_tag 'permissions[content_assets][create]', true, @permissions.authorized_to?(:create, :content_assets), title: 'Content Assets: Create'
+              %td= check_box_tag 'permissions[content_assets][edit]', true, @permissions.authorized_to?(:edit, :content_assets), title: 'Content Assets: Edit'
+              %td= check_box_tag 'permissions[content_assets][destroy]', true, @permissions.authorized_to?(:destroy, :content_assets), title: 'Content Assets: Remove'
+            %tr
+              %th Customer Service
+              %td -
+              %td -
+              %td= check_box_tag 'permissions[customer_service][use]', true, @permissions.authorized_to?(:use, :customer_service), title: 'Customer Service'
+              %td -
+            %tr
+              %th Discounts
+              %td= check_box_tag 'permissions[discounts][view]', true, @permissions.authorized_to?(:view, :discounts), title: 'Discounts: View'
+              %td= check_box_tag 'permissions[discounts][create]', true, @permissions.authorized_to?(:create, :discounts), title: 'Discounts: Create'
+              %td= check_box_tag 'permissions[discounts][edit]', true, @permissions.authorized_to?(:edit, :discounts), title: 'Discounts: Edit'
+              %td= check_box_tag 'permissions[discounts][destroy]', true, @permissions.authorized_to?(:destroy, :discounts), title: 'Discounts: Remove'
+            %tr
+              %th Exports
+              %td -
+              %td= check_box_tag 'permissions[exports][create]', true, @permissions.authorized_to?(:create, :exports), title: 'Exports: Create'
+              %td -
+              %td -
+            %tr
+              %th Inventory
+              %td= check_box_tag 'permissions[inventory_skus][view]', true, @permissions.authorized_to?(:view, :inventory_skus), title: 'Inventory: View'
+              %td= check_box_tag 'permissions[inventory_skus][create]', true, @permissions.authorized_to?(:create, :inventory_skus), title: 'Inventory: Create'
+              %td= check_box_tag 'permissions[inventory_skus][edit]', true, @permissions.authorized_to?(:edit, :inventory_skus), title: 'Inventory: Edit'
+              %td= check_box_tag 'permissions[inventory_skus][destroy]', true, @permissions.authorized_to?(:destroy, :inventory_skus), title: 'Inventory: Remove'
+            %tr
+              %th Orders
+              %td= check_box_tag 'permissions[orders][view]', true, @permissions.authorized_to?(:view, :orders), title: 'Orders: View'
+              %td -
+              %td= check_box_tag 'permissions[orders][edit]', true, @permissions.authorized_to?(:edit, :orders), title: 'Orders: Edit'
+              %td -
+            %tr
+              %th Page Manager
+              %td= check_box_tag 'permissions[menus][view]', true, @permissions.authorized_to?(:view, :menus), title: 'Menus: View'
+              %td -
+              %td= check_box_tag 'permissions[menus][edit]', true, @permissions.authorized_to?(:edit, :menus), title: 'Menus: Edit'
+              %td -
+            %tr
+              %th Pages
+              %td= check_box_tag 'permissions[pages][view]', true, @permissions.authorized_to?(:view, :pages), title: 'Pages: View'
+              %td= check_box_tag 'permissions[pages][create]', true, @permissions.authorized_to?(:create, :pages), title: 'Pages: Create'
+              %td= check_box_tag 'permissions[pages][edit]', true, @permissions.authorized_to?(:edit, :pages), title: 'Pages: Edit'
+              %td= check_box_tag 'permissions[pages][destroy]', true, @permissions.authorized_to?(:destroy, :pages), title: 'Pages: Remove'
+            %tr
+              %th Prices
+              %td= check_box_tag 'permissions[pricing_skus][view]', true, @permissions.authorized_to?(:view, :pricing_skus), title: 'Prices: View'
+              %td= check_box_tag 'permissions[pricing_skus][create]', true, @permissions.authorized_to?(:create, :pricing_skus), title: 'Prices: Create'
+              %td= check_box_tag 'permissions[pricing_skus][edit]', true, @permissions.authorized_to?(:edit, :pricing_skus), title: 'Prices: Edit'
+              %td= check_box_tag 'permissions[pricing_skus][destroy]', true, @permissions.authorized_to?(:destroy, :pricing_skus), title: 'Prices: Remove'
+            %tr
+              %th Products
+              %td= check_box_tag 'permissions[products][view]', true, @permissions.authorized_to?(:view, :products), title: 'Products: View'
+              %td= check_box_tag 'permissions[products][create]', true, @permissions.authorized_to?(:create, :products), title: 'Products: Create'
+              %td= check_box_tag 'permissions[products][edit]', true, @permissions.authorized_to?(:edit, :products), title: 'Products: Edit'
+              %td= check_box_tag 'permissions[products][destroy]', true, @permissions.authorized_to?(:destroy, :products), title: 'Products: Remove'
+            %tr
+              %th Promo Codes
+              %td= check_box_tag 'permissions[promo_code_lists][view]', true, @permissions.authorized_to?(:view, :promo_code_lists), title: 'Promo Code Lists: View'
+              %td= check_box_tag 'permissions[promo_code_lists][create]', true, @permissions.authorized_to?(:create, :promo_code_lists), title: 'Promo Code Lists: Create'
+              %td= check_box_tag 'permissions[promo_code_lists][edit]', true, @permissions.authorized_to?(:edit, :promo_code_lists), title: 'Promo Code Lists: Edit'
+              %td= check_box_tag 'permissions[promo_code_lists][destroy]', true, @permissions.authorized_to?(:destroy, :promo_code_lists), title: 'Promo Code Lists: Remove'
+            %tr
+              %th Redirects
+              %td= check_box_tag 'permissions[redirects][view]', true, @permissions.authorized_to?(:view, :redirects), title: 'Redirects: View'
+              %td= check_box_tag 'permissions[redirects][create]', true, @permissions.authorized_to?(:create, :redirects), title: 'Redirects: Create'
+              %td= check_box_tag 'permissions[redirects][edit]', true, @permissions.authorized_to?(:edit, :redirects), title: 'Redirects: Edit'
+              %td= check_box_tag 'permissions[redirects][destroy]', true, @permissions.authorized_to?(:destroy, :redirects), title: 'Redirects: Remove'
+            %tr
+              %th Releases
+              %td= check_box_tag 'permissions[releases][view]', true, @permissions.authorized_to?(:view, :releases), title: 'Releases: View'
+              %td= check_box_tag 'permissions[releases][create]', true, @permissions.authorized_to?(:create, :releases), title: 'Releases: Create'
+              %td= check_box_tag 'permissions[releases][edit]', true, @permissions.authorized_to?(:edit, :releases), title: 'Releases: Edit'
+              %td= check_box_tag 'permissions[releases][destroy]', true, @permissions.authorized_to?(:destroy, :releases), title: 'Releases: Remove'
+            %tr
+              %th Reports
+              %td= check_box_tag 'permissions[reports][view]', true, @permissions.authorized_to?(:view, :reports), title: 'Reports: View'
+              %td -
+              %td -
+              %td -
+            %tr
+              %th Search Explanations
+              %td= check_box_tag 'permissions[search_explanations][view]', true, @permissions.authorized_to?(:view, :search_explanations), title: 'Search Explanations: View'
+              %td -
+              %td -
+              %td -
+            %tr
+              %th Search Redirects
+              %td= check_box_tag 'permissions[search_redirects][view]', true, @permissions.authorized_to?(:view, :search_redirects), title: 'Search Redirects: View'
+              %td= check_box_tag 'permissions[search_redirects][create]', true, @permissions.authorized_to?(:create, :search_redirects), title: 'Search Redirects: Create'
+              %td= check_box_tag 'permissions[search_redirects][edit]', true, @permissions.authorized_to?(:edit, :search_redirects), title: 'Search Redirects: Edit'
+              %td= check_box_tag 'permissions[search_redirects][destroy]', true, @permissions.authorized_to?(:destroy, :search_redirects), title: 'Search Redirects: Remove'
+            %tr
+              %th Search Settings
+              %td= check_box_tag 'permissions[search_settings][view]', true, @permissions.authorized_to?(:view, :search_settings), title: 'Search Settings: View'
+              %td -
+              %td= check_box_tag 'permissions[search_settings][edit]', true, @permissions.authorized_to?(:edit, :search_settings), title: 'Search Settings: Edit'
+              %td -
+            %tr
+              %th Segments
+              %td= check_box_tag 'permissions[segments][view]', true, @permissions.authorized_to?(:view, :segments), title: 'Segments: View'
+              %td= check_box_tag 'permissions[segments][create]', true, @permissions.authorized_to?(:create, :segments), title: 'Segments: Create'
+              %td= check_box_tag 'permissions[segments][edit]', true, @permissions.authorized_to?(:edit, :segments), title: 'Segments: Edit'
+              %td= check_box_tag 'permissions[segments][destroy]', true, @permissions.authorized_to?(:destroy, :segments), title: 'Segments: Remove'
+            %tr
+              %th Shipping Methods
+              %td= check_box_tag 'permissions[shipping_methods][view]', true, @permissions.authorized_to?(:view, :shipping_methods), title: 'Shipping Methods: View'
+              %td= check_box_tag 'permissions[shipping_methods][create]', true, @permissions.authorized_to?(:create, :shipping_methods), title: 'Shipping Methods: Create'
+              %td= check_box_tag 'permissions[shipping_methods][edit]', true, @permissions.authorized_to?(:edit, :shipping_methods), title: 'Shipping Methods: Edit'
+              %td= check_box_tag 'permissions[shipping_methods][destroy]', true, @permissions.authorized_to?(:destroy, :shipping_methods), title: 'Shipping Methods: Remove'
+            %tr
+              %th Skus
+              %td -
+              %td= check_box_tag 'permissions[skus][create]', true, @permissions.authorized_to?(:create, :skus), title: 'Skus: Create'
+              %td -
+              %td -
+            %tr
+              %th Smart Categories
+              %td= check_box_tag 'permissions[smart_categories][view]', true, @permissions.authorized_to?(:view, :smart_categories), title: 'Smart Categories: View'
+              %td= check_box_tag 'permissions[smart_categories][create]', true, @permissions.authorized_to?(:create, :smart_categories), title: 'Smart Categories: Create'
+              %td= check_box_tag 'permissions[smart_categories][edit]', true, @permissions.authorized_to?(:edit, :smart_categories), title: 'Smart Categories: Edit'
+              %td= check_box_tag 'permissions[smart_categories][destroy]', true, @permissions.authorized_to?(:destroy, :smart_categories), title: 'Smart Categories: Remove'
+            %tr
+              %th Status Emails
+              %td= check_box_tag 'permissions[status_emails][view]', true, @permissions.authorized_to?(:view, :status_emails), title: 'Status Emails: View'
+              %td -
+              %td= check_box_tag 'permissions[status_emails][edit]', true, @permissions.authorized_to?(:edit, :status_emails), title: 'Status Emails: Edit'
+              %td -
+            %tr
+              %th Users
+              %td= check_box_tag 'permissions[users][view]', true, @permissions.authorized_to?(:view, :users), title: 'Users: View'
+              %td= check_box_tag 'permissions[users][create]', true, @permissions.authorized_to?(:create, :users), title: 'Users: Create'
+              %td= check_box_tag 'permissions[users][edit]', true, @permissions.authorized_to?(:edit, :users), title: 'Users: Edit'
+              %td -
+
+            = append('user_permissions', permissions: @permissions)
+
+
+      .wl-section
+        %h2 User Data
+
+        .wl-section
+          %h3 Order Value
+          %table.wl-data-pairs
+            %tbody
+              %tr
+                %th
+                  %span Total Spent
+                %td= number_to_currency @user.total_spent
+              %tr
+                %th
+                  %span Total Orders Placed
+                %td= @user.total_orders
+              %tr
+                %th
+                  %span Average Order Value
+                %td= number_to_currency @user.average_order_value
+
+        .wl-section
+          %h3 Order Frequency
+          %table.wl-data-pairs
+            %tbody
+              %tr
+                %th
+                  %span Day
+                %td= @user.orders_per(:day)
+              %tr
+                %th
+                  %span Week
+                %td= @user.orders_per(:week)
+              %tr
+                %th
+                  %span Month
+                %td= @user.orders_per(:month)
+              %tr
+                %th
+                  %span Year
+                %td= @user.orders_per(:year)
+
+        .wl-section
+          %h3 Saved Addresses
+          - if @user.addresses.empty?
+            %p No saved addresses.
+          - else
+            %ul.wl-list
+              - @user.addresses.each do |address|
+                %li
+                  %p
+                    = address.first_name
+                    = address.last_name
+                    - if address.company.present?
+                      %br
+                      = address.company
+                    %br
+                    = address.street
+                    - if address.street_2.present?
+                      %br
+                      = address.street_2
+                    %br
+                    = address.city
+                    = address.region
+                    = address.postal_code
+                    - if address.country.present?
+                      %br
+                      = address.country
+                    - if address.phone_number.present?
+                      %br
+                      = number_to_phone address.phone_number, extension: address.phone_extension
+
+        .wl-section
+          %h3 Orders
+          - if @orders.empty?
+            %p No orders.
+          - else
+            %ul.wl-list
+              - @orders.each do |order|
+                %li
+                  %p= link_to order.number, edit_order_url(order)
+                  %p= order.placed_at.to_s(:long)
+
+    .wl-panel--buttons
+      .wl-action-group
+        %p= link_to 'Back', :back, class: 'wl-text-button--muted'
+        %p= button_tag 'Save Changes', value: 'save_user', class: 'wl-button'
+
