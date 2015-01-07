@@ -20,9 +20,6 @@ module Weblinc
       def self.current
         @@current ||= find_or_create_by_id(Site.current.id)
       end
-   
-      private
-
     end
   end
 end
