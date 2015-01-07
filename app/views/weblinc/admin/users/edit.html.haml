@@ -1,3 +1,6 @@
+-# only duplicating this so that I can add an append point for user properties
+-# fields. If an append point gets added to weblinc-ecommerce we can just remove
+-# this override.
 - @title = ['Users', 'Edit']
 
 .wl-edit-user-view.wl-view
@@ -41,7 +44,7 @@
             %span.text Store Credit
           .wl-value
             %span.prefix $
-            = text_field_tag 'payment[store_credit]', @payment.store_credit, class: 'wl-text-box--mini'
+            = text_fiejld_tag 'payment[store_credit]', @payment.store_credit, class: 'wl-text-box--mini'
 
         -# append additional form fields for user properties
         = append('user_properties_fields', user: @user)
