@@ -37,7 +37,7 @@ module Weblinc
               errors: ping_result["Messages"].collect { |message| message["Summary"] }
             }
           end
-        rescue NoMethodError => e   # typo in protocoal httttp://
+        rescue NoMethodError => e   # typo in protocol httttp://
           ret_value = {status: "Exception", errors: [e.message]}
         rescue ::OpenSSL::SSL::SSLError => e   # https, valid domain name but not offering tax service
           ret_value = {status: "Exception", errors: [e.message]}
