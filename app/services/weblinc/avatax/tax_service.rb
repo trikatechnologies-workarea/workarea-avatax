@@ -28,13 +28,13 @@ module Weblinc
 
       def ping
         begin  # catch exception if service URL is not valid
-          pingResult = @avatax_tax_service.ping
-          if pingResult["ResultCode"] == "Success"
+          ping_result = @avatax_tax_service.ping
+          if ping_result["ResultCode"] == "Success"
             ret_value = {status: 'Service Available', errors: []}
           else
             ret_value = {
               status: 'Errors',
-              errors: pingResult["Messages"].collect { |message| message["Summary"] }
+              errors: ping_result["Messages"].collect { |message| message["Summary"] }
             }
           end
         rescue Exception => e
