@@ -16,6 +16,7 @@ module Weblinc
 
         def adjust
           return unless order.shipping_address.present?
+          return unless order.call_avatax_api_flag
           get_avatax
         end
 
