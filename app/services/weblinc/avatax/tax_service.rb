@@ -13,10 +13,16 @@ module Weblinc
         end
       end
 
-      def get
-        response = avatax_tax_service.get(get_tax_request)
+      def get(options = {})
+        default_opts = {
+          commit: false
+        }
+        options = default_opts.merge(options)
 
-        result = { status: response["ResponseCode"] }
+        request = get_tax_request(options[:commit])
+        response = avatax_tax_service.get(request)
+
+        result = { status: response["ResultCode"] }
 
         if response["ResultCode"] == "Success"
           # separate taxed items and shipping cost
@@ -85,18 +91,18 @@ module Weblinc
         @avatax_tax_service ||= AvaTax::TaxService.new
       end
 
-      def get_tax_request
+      def get_tax_request(is_commit=false)
         if @get_request.blank?
+          cust_code = @order.email || "TEMPORARY"
           @get_request = {
-            CustomerCode: @order.email.truncate(50, omission: ''),
-            DocType: 'SalesOrder',
-            Commit:  false,
+            CustomerCode: cust_code.truncate(50, omission: ''),
+            DocType:  is_commit ? "PurchaseInvoice" : "PurchaseOrder",
+            Commit:  is_commit,
             DocDate: Time.now.strftime("%Y-%m-%d"),
             CompanyCode:  avatax_settings.company_code,
             Client:  "WEBLINC #{Weblinc::VERSION::STRING} AVATAX #{Weblinc::Avatax::VERSION}",
             DocCode:  "ORDER-#{@order.number}",
             DetailLevel:  "Tax",
-            DocType:  "SalesOrder",
             Addresses:  [ distribution_address, shipping_address ],
             Lines:  item_lines.push(shipping_line).as_json
           }
