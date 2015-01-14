@@ -14,8 +14,6 @@ module Weblinc
         ]
       end
 
-      isolate_namespace Weblinc::Avatax
-
       initializer 'weblinc.avatax.templates' do
         Weblinc::Admin.config.views.settings_menu.append(
           'weblinc/admin/menus/avatax_settings'
