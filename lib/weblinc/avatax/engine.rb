@@ -11,7 +11,7 @@ module Weblinc
 
       isolate_namespace Weblinc::Avatax
 
-      Weblinc::Admin.config.views.user_properties_fields.append(
+      Weblinc::Admin.config.views.user_properties.append(
         'weblinc/admin/users/user_properties_fields'
       )
     end
