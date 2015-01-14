@@ -36,6 +36,14 @@ module Weblinc
             :Lines => item_lines.push(shipping_line)
           }
 
+          if user.exemption_no.present?
+            request[:ExemptionNo] = user.exemption_no
+          end
+
+          if user.customer_usage_type.present?
+            request[:CustomerUsageType] = user.customer_usage_type
+          end
+
           result = Weblinc::Avatax::TaxService.new.get(request)
 
           if result["ResultCode"] == "Success"
@@ -85,6 +93,10 @@ module Weblinc
             Country: order.shipping_address.country,
             PostalCode: order.shipping_address.postal_code
           }
+        end
+
+        def user
+          @user ||= Weblinc::User.find_by(email: order.email)
         end
 
         def item_lines
