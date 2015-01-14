@@ -16,10 +16,11 @@ module Weblinc
 
         def adjust
           return unless order.shipping_address.present?
-          result = Weblinc::Avatax::TaxService.new(order).get
+          response = Weblinc::Avatax::TaxService.new(order).get
 
-          result[:item_adjustments].each do |adj|
-            adj[:item].adjust_pricing(
+          response.item_adjustments.each do |adj|
+            item = order.items.detect { |i| i.sku == adj[:sku] }
+            item.adjust_pricing(
               price: 'tax',
               calculator: self.class.name,
               description: 'Sales Tax',
@@ -27,7 +28,7 @@ module Weblinc
             )
           end
 
-          result[:shipping_adjustments].each do |adj|
+          response.shipping_adjustments.each do |adj|
             order.shipping_method.adjust_pricing(
               price: 'tax',
               calculator: self.class.name,
