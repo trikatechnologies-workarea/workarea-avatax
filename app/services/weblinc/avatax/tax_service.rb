@@ -106,6 +106,13 @@ module Weblinc
             Addresses:  [ distribution_address, shipping_address ],
             Lines:  item_lines.push(shipping_line).as_json
           }
+          if user.exemption_no.present?
+            @get_request[:ExemptionNo] = user.exemption_no
+          end
+
+          if user.customer_usage_type.present?
+            @get_request[:CustomerUsageType] = user.customer_usage_type
+          end
         end
 
         pp @get_request
@@ -149,6 +156,9 @@ module Weblinc
         }
       end
 
+      def user
+        @user ||= Weblinc::User.find_by(email: @order.email)
+      end
 
       def log_errors(endpoint, messages=[])
         Rails.logger.error "Avatax #{endpoint} call failed"
