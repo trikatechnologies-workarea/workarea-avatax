@@ -47,6 +47,8 @@ module Weblinc
         begin  # catch exception if service URL is not valid
           api_result = avatax_client.ping
         rescue NoMethodError, ::OpenSSL::SSL::SSLError, ::Errno::ETIMEDOUT => e
+          # avatax client ping method doesn't really deal well with bad domain
+          # settings, so we catch some exceptions to handle them a little better
           # NoMethodError => typo in protocol ex httttttp://
           # SSLError => https, valid domain name but not offering tax service
           # ETIMEDOUT => https, invalid domain name
