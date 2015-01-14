@@ -29,8 +29,6 @@ module Weblinc
 
       def item_adjustments
         item_lines.map do |line|
-          puts "response line:"
-          pp line
           {
             # line no is sent as "<item sku>-<index in order>" since Avatax
             # neglects to send us back the SKU we sent in the request
