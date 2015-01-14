@@ -22,10 +22,11 @@ module Weblinc
         private
 
         def get_avatax
+          settings = Weblinc::Avatax::Setting.current
           request = {
             :CustomerCode => order.email.truncate(50, omission: ''),
             :DocDate => Time.now.strftime("%Y-%m-%d"),
-            :CompanyCode => Weblinc::Avatax.config.company_code,
+            :CompanyCode => settings.company_code,
             :Client => "WEBLINC",
             :DocCode => "INV #{order.number}",
             :DetailLevel => "Tax",
@@ -43,7 +44,7 @@ module Weblinc
             request[:CustomerUsageType] = user.customer_usage_type
           end
 
-          result = AvaTax::TaxService.new.get(request)
+          result = Weblinc::Avatax::TaxService.new.get(request)
 
           if result["ResultCode"] == "Success"
             lines_shipping = result['TaxLines']
