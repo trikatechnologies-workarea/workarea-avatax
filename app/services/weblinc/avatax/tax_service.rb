@@ -24,7 +24,10 @@ module Weblinc
       end
 
       def commit
-        request = Weblinc::Avatax::TaxRequest.new(order: @order)
+        request = Weblinc::Avatax::TaxRequest.new(
+          order: @order,
+          commit: true
+        )
         api_response = avatax_client.get(request.as_json)
         Weblinc::Avatax::TaxResponse.new(
           avatax_response: api_response,
