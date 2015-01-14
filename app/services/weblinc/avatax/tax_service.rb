@@ -42,7 +42,7 @@ module Weblinc
 
       def ping
         begin  # catch exception if service URL is not valid
-          api_result = @avatax_tax_service.ping
+          api_result = avatax_client.ping
         rescue NoMethodError, ::OpenSSL::SSL::SSLError, ::Errno::ETIMEDOUT => e
           # NoMethodError => typo in protocol ex httttttp://
           # SSLError => https, valid domain name but not offering tax service
@@ -55,7 +55,7 @@ module Weblinc
           }
         end
 
-        Weblinc::Avatax::TaxResponse(
+        Weblinc::Avatax::TaxResponse.new(
           avatax_response: api_result,
           endpoint: 'EstimateTax (ping)'
         )

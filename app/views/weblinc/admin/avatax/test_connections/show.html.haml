@@ -11,7 +11,8 @@
       .wl-section
         %h2 Test Connection
 
-        - if @connection[:errors].any?
+        
+        - if @connection.errors.any?
           - @connection[:errors].each do |message|
             .wl-message--error
               %p.type
@@ -21,7 +22,7 @@
           .wl-message--success
             %p.type
               %span Success
-            %p.message #{@connection[:status]}
+            %p.message #{@connection.status}
 
         - @settings.each do |field, value|
           .wl-property
