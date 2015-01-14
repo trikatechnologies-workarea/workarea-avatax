@@ -36,11 +36,11 @@ module Weblinc
       end
 
       def cancel(request_hash)
-        @avatax_tax_service.cancel(request_hash)
+        avatax_client.cancel(request_hash)
       end
 
       def estimate(coordinates, sale_amount)
-        @avatax_tax_service.estimate(coordinates, sale_amount)
+        avatax_client.estimate(coordinates, sale_amount)
       end
 
       def ping
