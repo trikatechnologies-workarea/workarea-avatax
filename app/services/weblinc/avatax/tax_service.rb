@@ -19,6 +19,7 @@ module Weblinc
           commit: false
         }
         options = default_opts.merge(options)
+        response = avatax_client.get(request.as_json)
 
         request = Weblinc::Avatax::TaxRequest.new(
           order: @order,
