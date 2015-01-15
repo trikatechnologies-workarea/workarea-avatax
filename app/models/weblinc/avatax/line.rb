@@ -40,8 +40,8 @@ module Weblinc
           ItemCode: @item.sku,
           Qty: @item.quantity,
           Amount: share_amount.to_s,
-          OriginCode: Weblinc::Avatax::DEFAULT_ORIGIN_CODE,
-          DestinationCode: Weblinc::Avatax::DEFAULT_DEST_CODE,
+          OriginCode: Weblinc::Avatax::TaxRequest::DEFAULT_ORIGIN_CODE,
+          DestinationCode: Weblinc::Avatax::TaxRequest::DEFAULT_DEST_CODE,
 
           # Best Practice Request Parameters
           Description: description,
