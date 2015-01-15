@@ -67,8 +67,8 @@ module Weblinc
           Qty: 1,
           Amount: shipping_total.to_s,
           TaxCode: 'FR',
-          OriginCode: Weblinc::Avatax::DEFAULT_ORIGIN_CODE,
-          DestinationCode: Weblinc::Avatax::DEFAULT_DEST_CODE
+          OriginCode: DEFAULT_ORIGIN_CODE,
+          DestinationCode: DEFAULT_DEST_CODE
         }
       end
 
