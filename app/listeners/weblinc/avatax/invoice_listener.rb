@@ -2,7 +2,7 @@ module Weblinc
   module Avatax
     class InvoiceListener
       def weblinc_order_placed(order)
-        Weblinc::Avatax::TaxService.new(order).commit
+        Weblinc::Avatax::TaxWorker.perform_async(order.number)
       end
     end
   end
