@@ -16,7 +16,11 @@ module Weblinc
 
       def get
         request = Weblinc::Avatax::TaxRequest.new(order: @order)
-        api_response = avatax_client.get(request.as_json)
+
+        api_response = log_time('GetTax') do
+          avatax_client.get(request.as_json)
+        end
+
         Weblinc::Avatax::TaxResponse.new(
           avatax_response: api_response,
           endpoint: 'GetTax (get)'
@@ -28,7 +32,10 @@ module Weblinc
           order: @order,
           commit: true
         )
-        api_response = avatax_client.get(request.as_json)
+        api_response = log_time('GetTax (commit)') do
+          avatax_client.get(request.as_json)
+        end
+
         Weblinc::Avatax::TaxResponse.new(
           avatax_response: api_response,
           endpoint: 'GetTax (commit)'
@@ -70,6 +77,14 @@ module Weblinc
 
       def avatax_client
         @avatax_client ||= AvaTax::TaxService.new
+      end
+
+      def log_time(msg)
+        time = Time.now
+        value = yield
+        ms_since = (Time.now - time) * 1000
+        Rails.logger.info "AvaTax #{msg} completed in #{ms_since}ms"
+        return value
       end
     end
   end
