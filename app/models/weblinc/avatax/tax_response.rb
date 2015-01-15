@@ -6,7 +6,7 @@ module Weblinc
       def initialize(options={})
         @avatax_response = options[:avatax_response] || {}
         @endpoint = options[:endpoint]
-        log_errors
+        log_errors if errors.present?
       end
 
       def status
