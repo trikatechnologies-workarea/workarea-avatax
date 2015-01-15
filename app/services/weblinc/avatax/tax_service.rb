@@ -14,7 +14,7 @@ module Weblinc
         end
       end
 
-      def get(options={})
+      def get
         request = Weblinc::Avatax::TaxRequest.new(order: @order)
         api_response = avatax_client.get(request.as_json)
         Weblinc::Avatax::TaxResponse.new(
