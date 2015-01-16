@@ -42,8 +42,11 @@ module Weblinc
         )
       end
 
-      def cancel(request_hash)
-        avatax_client.cancel(request_hash)
+      def cancel
+        request = Weblinc::Avatax::CancelTaxRequest.new(order: @order)
+        log_time('CancelTax') do
+          avatax_client.cancel(request.as_json)
+        end
       end
 
       def estimate(coordinates, sale_amount)
