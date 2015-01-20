@@ -46,6 +46,7 @@ module Weblinc
       def commit
         request = Weblinc::Avatax::TaxRequest.new(
           order: @order,
+          doc_type: 'SalesInvoice',
           commit: true
         )
         api_response = log_time('GetTax (commit)') do

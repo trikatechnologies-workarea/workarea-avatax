@@ -12,9 +12,6 @@ module Weblinc
 
         if fulfillment.status == :cancelled
           tax_service.cancel
-        else
-          # if we're not cancelling, deal with any cancellations
-          tax_service.credit(payload[:cancellations])
         end
 
         if fulfillment.status == :shipped
