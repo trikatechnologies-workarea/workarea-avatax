@@ -27,6 +27,22 @@ module Weblinc
         )
       end
 
+      def post
+        endpoint = 'GetTax (post)'
+        request = Weblinc::Avatax::TaxRequest.new(
+          order: @order,
+          doc_type: 'SalesInvoice'
+        )
+        api_response = log_time(endpoint) do
+          avatax_client.get(request.as_json)
+        end
+
+        Weblinc::Avatax::TaxResponse.new(
+          avatax_response: api_response,
+          endpoint: endpoint
+        )
+      end
+
       def commit
         request = Weblinc::Avatax::TaxRequest.new(
           order: @order,
