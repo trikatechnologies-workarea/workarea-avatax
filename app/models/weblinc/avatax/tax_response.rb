@@ -30,9 +30,7 @@ module Weblinc
       def item_adjustments
         item_lines.map do |line|
           {
-            # line no is sent as "<item sku>-<index in order>" since Avatax
-            # neglects to send us back the SKU we sent in the request
-            sku: line['LineNo'].split('-').first,
+            sku: line['LineNo'].split('-').last,
             amount: line['Tax'].to_m 
           }
         end
