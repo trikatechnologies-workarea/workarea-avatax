@@ -11,7 +11,6 @@ module Weblinc
         @order = options[:order]
         @commit = options[:commit]
         @doc_type = options[:doc_type]
-        @user = Weblinc::User.find_by(email: order.email)
       end
 
       # PurchaseOrder type means that the document will not be saved
@@ -58,11 +57,15 @@ module Weblinc
 
       def item_lines
         order.items.flat_map.with_index do |item, i|
-          tax_codes = item.price_adjustments.map { |a| a.data['tax_code'] }
-          tax_codes.compact.uniq
-            .map.with_index do |code, k|
-              Line.new(item: item, tax_code: code, index: "#{i}-#{k}")
-            end
+          adjustments = item.price_adjustments.select do |a|
+            !a.discount? && a.price == 'item'
+          end
+          tax_codes = adjustments.map { |a| a.data['tax_code'] }
+          puts tax_codes.uniq
+
+          tax_codes.uniq.map do |code|
+            Weblinc::Avatax::Line.new(item: item, tax_code: code)
+          end
         end
       end
 

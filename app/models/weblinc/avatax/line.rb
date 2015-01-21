@@ -1,7 +1,7 @@
 module Weblinc
   module Avatax
     class Line
-      attr_accessor :item, :tax_code
+      attr_accessor :item
 
       def initialize(options={})
         @item = options[:item]
@@ -26,21 +26,29 @@ module Weblinc
       end
 
       def line_no
-        "#{@index}-#{item.sku}"
-      end
-
-      def code_adjustments
-        item.price_adjustments.select do |adj|
-          adj.data['tax_code'] == self.tax_code
-        end
+        "#{item.sku}-#{tax_code}"
       end
 
       def code_amount
-        code_adjustments.sum(&:amount)
+        code_price_adjustments.sum(&:amount)
+      end
+
+      def code_price_adjustments
+        item.price_adjustments.select do |a|
+          a.price == 'item' && a.data['tax_code'] == @tax_code
+        end
       end
 
       def discount_amount
-        item.price_adjustments.discounts.sum(&:amount)
+        if pricing.tax_code == @tax_code
+          item.price_adjustments.discounts.sum(&:amount)
+        else
+          0.to_m
+        end
+      end
+
+      def tax_code
+        @tax_code.present? ? @tax_code : 'NT'
       end
 
       def pricing
@@ -59,7 +67,7 @@ module Weblinc
 
           # Best Practice Request Parameters
           Description: description,
-          TaxCode: tax_code
+          TaxCode: tax_code.present? ? tax_code : 'NT'
         }
       end
     end

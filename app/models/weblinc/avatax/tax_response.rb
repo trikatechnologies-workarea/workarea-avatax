@@ -30,7 +30,7 @@ module Weblinc
       def item_adjustments
         item_lines.map do |line|
           {
-            sku: line['LineNo'].split('-').last,
+            sku: line['LineNo'].split('-').first,
             amount: line['Tax'].to_m 
           }
         end
