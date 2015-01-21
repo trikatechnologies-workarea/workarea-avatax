@@ -2,10 +2,7 @@ module Weblinc
   class Admin::Avatax::TestConnectionsController < Admin::ApplicationController
     def show
       current_settings = Weblinc::Avatax::Setting.current
-
       @connection = Weblinc::Avatax::TaxService.new.ping
-      flash[:error] = @connection[:status] unless @connection[:errors].empty?
-
       @settings =
         {
           service_url:    current_settings[:service_url],
