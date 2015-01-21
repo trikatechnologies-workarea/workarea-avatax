@@ -57,8 +57,12 @@ module Weblinc
       end
 
       def item_lines
-        order.items.map.with_index do |item, index|
-          Weblinc::Avatax::Line.new(item: item, line_no: index)
+        order.items.flat_map.with_index do |item, i|
+          tax_codes = item.price_adjustments.map { |a| a.data['tax_code'] }
+          tax_codes.compact.uniq
+            .map.with_index do |code, k|
+              Line.new(item: item, tax_code: code, index: "#{i}-#{k}")
+            end
         end
       end
 
@@ -100,7 +104,7 @@ module Weblinc
           DocCode:  doc_code,
           DetailLevel:  "Tax",
           Addresses:  [ distribution_address, shipping_address ],
-          Lines:  lines
+          Lines:  lines.as_json
         }
 
         if exemption_no.present?

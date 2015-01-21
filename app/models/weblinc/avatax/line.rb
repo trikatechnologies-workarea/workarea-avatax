@@ -1,21 +1,12 @@
 module Weblinc
   module Avatax
     class Line
-      attr_accessor :item, :line_no
+      attr_accessor :item, :tax_code
 
       def initialize(options={})
         @item = options[:item]
-        @line_no = options[:line_no]
-      end
-
-      def tax_code
-        # if the tax code isn't blank return it, otherwise return NT to represent
-        # non-taxable items
-        if price.data['tax_code'].present?
-          price.data['tax_code']
-        else
-          'NT'
-        end
+        @index = options[:index]
+        @tax_code = options[:tax_code]
       end
 
       def description
@@ -23,7 +14,7 @@ module Weblinc
       end
 
       def amount
-        (price.amount + discount_amount).to_s
+        (code_amount + discount_amount).to_s
       end
 
       def quantity
@@ -34,15 +25,34 @@ module Weblinc
         item.sku
       end
 
-      def price
-        item.price_adjustments.detect { |adj| adj.price == "item" }
+      def line_no
+        "#{@index}-#{item.sku}"
+      end
+
+      def code_adjustments
+        item.price_adjustments.select do |adj|
+          adj.data['tax_code'] == self.tax_code
+        end
+      end
+
+      def code_amount
+        code_adjustments.sum(&:amount)
       end
 
       def discount_amount
-        item.price_adjustments.discounts.sum(&:amount)
+        # only apply discounts to the line for the tax_code matching the item
+        if self.tax_code == pricing.tax_code
+          item.price_adjustments.discounts.sum(&:amount)
+        else
+          0.to_m
+        end
       end
 
-      def to_request
+      def pricing
+        @pricing ||= Weblinc::Pricing::Sku.find item.sku
+      end
+
+      def as_json
         {
           # Required Parameters
           LineNo: line_no,
