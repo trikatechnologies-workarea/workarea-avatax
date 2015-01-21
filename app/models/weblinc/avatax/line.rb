@@ -36,7 +36,7 @@ module Weblinc
       def to_request
         {
           # Required Parameters
-          LineNo: @line_no,
+          LineNo: "#{@item.sku}-#{@line_no}",
           ItemCode: @item.sku,
           Qty: @item.quantity,
           Amount: share_amount.to_s,
