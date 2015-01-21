@@ -16,8 +16,9 @@ module Weblinc
 
       def get
         request = Weblinc::Avatax::TaxRequest.new(order: @order)
+        endpoint = 'GetTax (get)'
 
-        api_response = log_time('GetTax') do
+        api_response = log(request, endpoint) do
           avatax_client.get(request.as_json)
         end
 
@@ -28,12 +29,13 @@ module Weblinc
       end
 
       def post
-        endpoint = 'GetTax (post)'
         request = Weblinc::Avatax::TaxRequest.new(
           order: @order,
           doc_type: 'SalesInvoice'
         )
-        api_response = log_time(endpoint) do
+        endpoint = 'GetTax (post)'
+
+        api_response = log(request, endpoint) do
           avatax_client.get(request.as_json)
         end
 
@@ -49,19 +51,22 @@ module Weblinc
           doc_type: 'SalesInvoice',
           commit: true
         )
-        api_response = log_time('GetTax (commit)') do
+        endpoint = 'GetTax (commit)'
+
+        api_response = log(endpoint, request) do
           avatax_client.get(request.as_json)
         end
 
         Weblinc::Avatax::TaxResponse.new(
           avatax_response: api_response,
-          endpoint: 'GetTax (commit)'
+          endpoint: endpoint
         )
       end
 
       def cancel
         request = Weblinc::Avatax::CancelTaxRequest.new(order: @order)
-        log_time('CancelTax') do
+        endpoint = 'CancelTax (cancel)'
+        log(request, endpoint) do
           avatax_client.cancel(request.as_json)
         end
       end
@@ -99,12 +104,15 @@ module Weblinc
         @avatax_client ||= AvaTax::TaxService.new
       end
 
-      def log_time(msg)
+      def log(request, msg)
         time = Time.now
-        value = yield
+        block_return = yield
         ms_since = (Time.now - time) * 1000
+
         Rails.logger.info "AvaTax #{msg} completed in #{ms_since}ms"
-        return value
+        Rails.logger.info "AvaTax Request: #{request.as_json}"
+
+        return block_return
       end
     end
   end
