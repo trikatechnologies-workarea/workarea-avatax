@@ -111,7 +111,7 @@ module Weblinc
 
         Rails.logger.info "AvaTax #{msg} completed in #{ms_since}ms"
         Rails.logger.info "AvaTax Request: #{request.as_json}"
-
+        Rails.logger.info "Avatax Response: #{block_return}"
         return block_return
       end
     end
