@@ -40,12 +40,7 @@ module Weblinc
       end
 
       def discount_amount
-        # only apply discounts to the line for the tax_code matching the item
-        if self.tax_code == pricing.tax_code
-          item.price_adjustments.discounts.sum(&:amount)
-        else
-          0.to_m
-        end
+        item.price_adjustments.discounts.sum(&:amount)
       end
 
       def pricing

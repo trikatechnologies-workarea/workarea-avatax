@@ -15,7 +15,7 @@ module Weblinc
         end
 
         def adjust
-          return unless order.shipping_address.present?
+          return unless order.call_avatax_api_flag
           response = Weblinc::Avatax::TaxService.new(order).get
 
           response.item_adjustments.each do |adj|
