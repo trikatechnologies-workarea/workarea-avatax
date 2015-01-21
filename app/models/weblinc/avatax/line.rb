@@ -1,45 +1,54 @@
 module Weblinc
   module Avatax
     class Line
-      attr_accessor :item
+      attr_accessor :item, :line_no
 
       def initialize(options={})
         @item = options[:item]
-        @adjustment = options[:adjustment]
-        @share = options[:share] || 1
-
         @line_no = options[:line_no]
       end
 
       def tax_code
         # if the tax code isn't blank return it, otherwise return NT to represent
         # non-taxable items
-        if @adjustment.data['tax_code'].present?
-          @adjustment.data['tax_code']
+        if price.data['tax_code'].present?
+          price.data['tax_code']
         else
           'NT'
         end
       end
 
       def description
-        @item.sku_details.values.join(' ')
+        item.sku_details.values.join(' ')
       end
 
       def amount
-        @adjustment.amount
+        (price.amount + discount_amount).to_s
       end
 
-      def share_amount
-        amount * @share
+      def quantity
+        item.quantity
+      end
+
+      def item_code
+        item.sku
+      end
+
+      def price
+        item.price_adjustments.detect { |adj| adj.price == "item" }
+      end
+
+      def discount_amount
+        item.price_adjustments.discounts.sum(&:amount)
       end
 
       def to_request
         {
           # Required Parameters
-          LineNo: "#{@item.sku}-#{@line_no}",
-          ItemCode: @item.sku,
-          Qty: @item.quantity,
-          Amount: share_amount.to_s,
+          LineNo: line_no,
+          ItemCode: item_code,
+          Qty: quantity,
+          Amount: amount,
           OriginCode: Weblinc::Avatax::TaxRequest::DEFAULT_ORIGIN_CODE,
           DestinationCode: Weblinc::Avatax::TaxRequest::DEFAULT_DEST_CODE,
 

@@ -57,8 +57,8 @@ module Weblinc
       end
 
       def item_lines
-        order.items.flat_map.with_index do |item, index|
-          Weblinc::Avatax::LineFactory.make_item_lines(item, index)
+        order.items.map.with_index do |item, index|
+          Weblinc::Avatax::Line.new(item: item, line_no: index)
         end
       end
 
