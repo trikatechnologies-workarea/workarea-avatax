@@ -63,18 +63,6 @@ module Weblinc
         )
       end
 
-      def cancel
-        request = Weblinc::Avatax::CancelTaxRequest.new(order: @order)
-        endpoint = 'CancelTax (cancel)'
-        log(request, endpoint) do
-          avatax_client.cancel(request.as_json)
-        end
-      end
-
-      def estimate(coordinates, sale_amount)
-        avatax_client.estimate(coordinates, sale_amount)
-      end
-
       def ping
         begin  # catch exception if service URL is not valid
           api_result = avatax_client.ping
