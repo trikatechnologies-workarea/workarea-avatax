@@ -16,31 +16,51 @@ module Weblinc
 
       def get
         request = Weblinc::Avatax::TaxRequest.new(order: @order)
-        api_response = avatax_client.get(request.as_json)
+        endpoint = 'GetTax (get)'
+
+        api_response = log(request, endpoint) do
+          avatax_client.get(request.as_json)
+        end
+
         Weblinc::Avatax::TaxResponse.new(
           avatax_response: api_response,
           endpoint: 'GetTax (get)'
         )
       end
 
+      def post
+        request = Weblinc::Avatax::TaxRequest.new(
+          order: @order,
+          doc_type: 'SalesInvoice'
+        )
+        endpoint = 'GetTax (post)'
+
+        api_response = log(request, endpoint) do
+          avatax_client.get(request.as_json)
+        end
+
+        Weblinc::Avatax::TaxResponse.new(
+          avatax_response: api_response,
+          endpoint: endpoint
+        )
+      end
+
       def commit
         request = Weblinc::Avatax::TaxRequest.new(
           order: @order,
+          doc_type: 'SalesInvoice',
           commit: true
         )
-        api_response = avatax_client.get(request.as_json)
+        endpoint = 'GetTax (commit)'
+
+        api_response = log(endpoint, request) do
+          avatax_client.get(request.as_json)
+        end
+
         Weblinc::Avatax::TaxResponse.new(
           avatax_response: api_response,
-          endpoint: 'GetTax (commit)'
+          endpoint: endpoint
         )
-      end
-
-      def cancel(request_hash)
-        avatax_client.cancel(request_hash)
-      end
-
-      def estimate(coordinates, sale_amount)
-        avatax_client.estimate(coordinates, sale_amount)
       end
 
       def ping
@@ -70,6 +90,17 @@ module Weblinc
 
       def avatax_client
         @avatax_client ||= AvaTax::TaxService.new
+      end
+
+      def log(request, msg)
+        time = Time.now
+        block_return = yield
+        ms_since = (Time.now - time) * 1000
+
+        Rails.logger.info "AvaTax #{msg} completed in #{ms_since}ms"
+        Rails.logger.info "AvaTax Request: #{request.as_json}"
+        Rails.logger.info "Avatax Response: #{block_return}"
+        return block_return
       end
     end
   end

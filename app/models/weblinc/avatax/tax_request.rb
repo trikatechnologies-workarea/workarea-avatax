@@ -2,7 +2,7 @@ module Weblinc
   module Avatax
     class TaxRequest
       attr_accessor :order, :user
-      attr_writer :commit
+      attr_writer :commit, :doc_type
 
       DEFAULT_DEST_CODE = "DEST"
       DEFAULT_ORIGIN_CODE = "ORIGIN"
@@ -10,14 +10,14 @@ module Weblinc
       def initialize(options = {})
         @order = options[:order]
         @commit = options[:commit]
-        @user = Weblinc::User.find_by(email: order.email)
+        @doc_type = options[:doc_type]
       end
 
       # PurchaseOrder type means that the document will not be saved
       # PurchaseInvoice type means that the document will be saved and 
       # appear in the Avatax admin
       def doc_type
-        commit ? "PurchaseInvoice" : "PurchaseOrder"
+        @doc_type || "SalesOrder"
       end
 
       def commit
@@ -27,7 +27,11 @@ module Weblinc
       # if we're not comitting don't bother with a real customer code since
       # the document is temporary anyway (via DocType). Must be < 50 chars
       def customer_code
-        (commit ? order.email : "TEMPORARY").truncate(50, omission: '')
+        if doc_type == "SalesInvoice"
+          order.email.truncate(50, omission: '')
+        else
+          "TEMPORARY"
+        end
       end
 
       def doc_code
@@ -52,8 +56,16 @@ module Weblinc
       end
 
       def item_lines
-        order.items.flat_map.with_index do |item, index|
-          Weblinc::Avatax::LineFactory.make_item_lines(item, index)
+        order.items.flat_map.with_index do |item, i|
+          adjustments = item.price_adjustments.select do |a|
+            !a.discount? && a.price == 'item'
+          end
+          tax_codes = adjustments.map { |a| a.data['tax_code'] }
+          puts tax_codes.uniq
+
+          tax_codes.uniq.map do |code|
+            Weblinc::Avatax::Line.new(item: item, tax_code: code)
+          end
         end
       end
 
@@ -95,7 +107,7 @@ module Weblinc
           DocCode:  doc_code,
           DetailLevel:  "Tax",
           Addresses:  [ distribution_address, shipping_address ],
-          Lines:  lines
+          Lines:  lines.as_json
         }
 
         if exemption_no.present?

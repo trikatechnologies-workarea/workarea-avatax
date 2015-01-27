@@ -6,7 +6,7 @@ module Weblinc
       def initialize(options={})
         @avatax_response = options[:avatax_response] || {}
         @endpoint = options[:endpoint]
-        log_errors
+        log_errors if errors.present?
       end
 
       def status
@@ -30,8 +30,6 @@ module Weblinc
       def item_adjustments
         item_lines.map do |line|
           {
-            # line no is sent as "<item sku>-<index in order>" since Avatax
-            # neglects to send us back the SKU we sent in the request
             sku: line['LineNo'].split('-').first,
             amount: line['Tax'].to_m 
           }
