@@ -19,4 +19,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'weblinc', '~> 0.5.0'
   s.add_dependency 'avatax', '~> 14.4.4'
+  s.add_dependency 'mongoid-enum', '~> 0.2.0'
 end

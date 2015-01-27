@@ -1,5 +1,6 @@
 require 'avatax'
 require 'weblinc'
+require 'mongoid/enum'
 require 'weblinc/store_front'
 require 'weblinc/admin'
 
