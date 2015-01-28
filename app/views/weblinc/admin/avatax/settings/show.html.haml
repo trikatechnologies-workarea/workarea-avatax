@@ -25,6 +25,17 @@
               %span.text= field.to_s.titleize
             .wl-value= text_field_tag "settings[#{field}]", value, class: 'wl-text-box'
 
+        %h3 Tax Document Handling
+        %p
+          = radio_button_tag "settings[doc_handling]", :commit, @current_settings.doc_handling == :commit
+          = label_tag :settings_doc_handling_commit, "Post and Commit after checkout"
+        %p
+          = radio_button_tag "settings[doc_handling]", :post, @current_settings.doc_handling == :post
+          = label_tag :settings_doc_handling_post, "Post only after checkout"
+        %p
+          = radio_button_tag "settings[doc_handling]", :none, @current_settings.doc_handling == :none
+          = label_tag :settings_doc_handling_none, "Do nothing after checkout"
+
     .wl-panel--buttons
       .wl-action-group
         %p= link_to 'Cancel', :back, class: 'wl-text-button--muted'

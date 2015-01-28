@@ -17,11 +17,19 @@ module Weblinc
       # PurchaseInvoice type means that the document will be saved and 
       # appear in the Avatax admin
       def doc_type
-        @doc_type || "SalesOrder"
+        if settings.doc_handling == :none || @doc_type.nil?
+          "SalesOrder"
+        else
+          @doc_type
+        end
       end
 
       def commit
-        @commit || false
+        if settings.doc_handling == :none || @commit.nil?
+          false
+        else
+          @commit
+        end
       end
 
       # if we're not comitting don't bother with a real customer code since

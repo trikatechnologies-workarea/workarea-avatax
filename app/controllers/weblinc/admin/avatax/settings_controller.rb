@@ -2,9 +2,9 @@ module Weblinc
 
   class Admin::Avatax::SettingsController < Admin::ApplicationController
     def show
-       current_settings = Weblinc::Avatax::Setting.current
-       @settings_drop = settings_drop_hash(current_settings)
-       @settings_text = settings_text_hash(current_settings)
+       @current_settings = Weblinc::Avatax::Setting.current
+       @settings_drop = settings_drop_hash(@current_settings)
+       @settings_text = settings_text_hash(@current_settings)
     end
 
     def update
@@ -34,7 +34,8 @@ module Weblinc
      end
 
      def setting_params
-      params.require(:settings).permit(:account_number,:license_key,:service_url,:company_code)
+      params.require(:settings).permit(:account_number,:license_key,
+                                       :service_url,:company_code, :doc_handling)
      end
   end
 end
