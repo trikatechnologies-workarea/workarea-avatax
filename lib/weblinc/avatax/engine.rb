@@ -28,7 +28,7 @@ module Weblinc
       end
 
       initializer 'weblinc.avatax.listeners' do
-        Weblinc::Publisher.add_listener(Weblinc::Avatax::InvoiceListener.new)
+        Weblinc::Publisher.add_listener(Weblinc::Avatax::InvoiceListener)
       end
     end
   end

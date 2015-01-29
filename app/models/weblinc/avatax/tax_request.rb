@@ -111,7 +111,7 @@ module Weblinc
           Commit:  commit,
           DocDate: Time.now.strftime("%Y-%m-%d"),
           CompanyCode:  settings.company_code,
-          Client:  "WEBLINC #{Weblinc::VERSION::STRING} AVATAX #{Weblinc::Avatax::VERSION}",
+          Client:  "WEBLINC AVATAX CONNECTOR #{Weblinc::Avatax::VERSION}",
           DocCode:  doc_code,
           DetailLevel:  "Tax",
           Addresses:  [ distribution_address, shipping_address ],
