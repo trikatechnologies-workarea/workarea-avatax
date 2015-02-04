@@ -14,7 +14,7 @@ module Weblinc
       end
 
       let(:user) { create_user }
-      let!(:order) { create_order_with_items(email: user.email) }
+      let!(:order) { create_checkout_order(email: user.email) }
       let!(:tax_request) { Weblinc::Avatax::TaxRequest.new(order: order, user: user) }
 
       describe '#doc_code' do
@@ -48,13 +48,6 @@ module Weblinc
             expect(tax_request.customer_code).to eq(long_email[0, 50])
           end
         end
-      end
-
-      describe '#doc_code' do
-        it 'should be present' do
-          expect(tax_request.doc_code).to be_present
-        end
-
       end
 
       describe '#item_lines' do
@@ -93,6 +86,85 @@ module Weblinc
         end
       end
 
+      describe '#shipping_address' do
+        it 'should be present' do
+          expect(tax_request.shipping_address).to be_present
+        end
+      end
+
+      describe '#distribution_address' do
+        it 'should be present' do
+          expect(tax_request.distribution_address).to be_present
+        end
+      end
+
+      describe '#commit' do
+        it 'should be false' do
+          expect(tax_request.commit).to be_false
+        end
+
+        context 'custom value passed in' do
+          let!(:tax_request) do
+            Weblinc::Avatax::TaxRequest.new(
+              order: order,
+              commit: true
+            )
+          end
+
+          it 'reflects the passed in value' do
+            expect(tax_request.commit).to be_true
+          end
+        end
+      end
+
+      describe '#doc_type' do
+        it 'should be SalesOrder' do
+          expect(tax_request.doc_type).to eq("SalesOrder")
+        end
+
+        context 'custom value passed in' do
+          let!(:tax_request) do
+            Weblinc::Avatax::TaxRequest.new(
+              order: order,
+              doc_type: 'SalesInvoice'
+            )
+          end
+
+          it 'should return the value passed in' do
+            expect(tax_request.doc_type).to eq('SalesInvoice')
+          end
+        end
+      end
+
+      describe '#exemption_no' do
+        it 'should not be present' do
+          expect(tax_request.exemption_no).not_to be_present
+        end
+
+        context 'order user has an exemption number' do
+          let(:user) { create_user(exemption_no: '12345') }
+
+          it 'should be present' do
+            expect(tax_request.exemption_no).to be_present
+          end
+        end
+      end
+
+      describe '#usage_type' do
+        it 'should be blank' do
+          expect(tax_request.usage_type).to be_blank
+        end
+
+        context 'order user has a usage_type' do
+          let(:user) { create_user(customer_usage_type: 'A') }
+
+          it 'should be present' do
+            puts "cust usage type: #{user.customer_usage_type}"
+            expect(tax_request.usage_type).to be_present
+          end
+        end
+      end
+
       context 'doc_handling is :none in the current settings' do
         before(:all) do
           @settings = Weblinc::Avatax::Setting.current
@@ -101,7 +173,7 @@ module Weblinc
         end
 
         describe '#doc_type' do
-          it 'should be false' do
+          it 'should be SalesOrder' do
             expect(tax_request.doc_type).to eq('SalesOrder')
           end
         end

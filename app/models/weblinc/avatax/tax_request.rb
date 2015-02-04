@@ -11,6 +11,7 @@ module Weblinc
         @order = options[:order]
         @commit = options[:commit]
         @doc_type = options[:doc_type]
+        @user = options[:user]
       end
 
       # PurchaseOrder type means that the document will not be saved
@@ -133,6 +134,8 @@ module Weblinc
       def settings
         @settings ||= Weblinc::Avatax::Setting.current
       end
+      
+
     end
   end
 end
