@@ -69,10 +69,9 @@ module Weblinc
             !a.discount? && a.price == 'item'
           end
           tax_codes = adjustments.map { |a| a.data['tax_code'] }
-          puts tax_codes.uniq
 
           tax_codes.uniq.map do |code|
-            Weblinc::Avatax::Line.new(item: item, tax_code: code)
+            Weblinc::Avatax::Line.new(item: item, tax_code: code).as_json
           end
         end
       end
@@ -115,7 +114,7 @@ module Weblinc
           DocCode:  doc_code,
           DetailLevel:  "Tax",
           Addresses:  [ distribution_address, shipping_address ],
-          Lines:  lines.as_json
+          Lines:  lines
         }
 
         if exemption_no.present?
