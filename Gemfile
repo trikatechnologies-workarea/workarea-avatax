@@ -18,6 +18,6 @@ gem "jquery-rails"
 # gem 'debugger'
 
 group :test, :development do
-  gem 'weblinc-dev_tools', '~> 0.4.0'
+  gem 'weblinc-dev_tools', '~> 0.6.3'
   gem 'ci_reporter', '1.9.2'
 end

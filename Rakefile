@@ -1,34 +1,24 @@
+#!/usr/bin/env rake
 begin
   require 'bundler/setup'
 rescue LoadError
   puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
 end
 
-require 'rdoc/task'
+require 'weblinc/rake_tasks'
+require 'ci/reporter/rake/rspec'
 
-RDoc::Task.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'Avatax'
-  rdoc.options << '--line-numbers'
-  rdoc.rdoc_files.include('README.rdoc')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
+require 'weblinc/avatax/version'
+
+desc "Release version #{Weblinc::Avatax::VERSION} of the gem"
+task :release do
+  host = "https://#{ENV['WEBLINC_GEM_USERNAME']}:#{ENV['WEBLINC_GEM_PASSWORD']}@#{ENV['WEBLINC_GEM_HOST']}"
+
+  system "git tag -a v#{Weblinc::Avatax::VERSION} -m 'Tagging #{Weblinc::Avatax::VERSION}'"
+  system 'git push --tags'
+
+  system "gem build weblinc-avatax.gemspec"
+  system "gem push weblinc-avatax-#{Weblinc::Avatax::VERSION}.gem --host #{host}"
+  system "rm weblinc-avatax-#{Weblinc::Avatax::VERSION}.gem"
 end
-
-APP_RAKEFILE = File.expand_path("../test/dummy/Rakefile", __FILE__)
-load 'rails/tasks/engine.rake'
-
-
-
-Bundler::GemHelper.install_tasks
-
-require 'rake/testtask'
-
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = false
-end
-
-
-task default: :test
