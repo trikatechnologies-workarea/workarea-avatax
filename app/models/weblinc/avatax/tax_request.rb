@@ -11,6 +11,7 @@ module Weblinc
         @order = options[:order]
         @commit = options[:commit]
         @doc_type = options[:doc_type]
+        @user = options[:user]
       end
 
       # PurchaseOrder type means that the document will not be saved
@@ -69,10 +70,9 @@ module Weblinc
             !a.discount? && a.price == 'item'
           end
           tax_codes = adjustments.map { |a| a.data['tax_code'] }
-          puts tax_codes.uniq
 
           tax_codes.uniq.map do |code|
-            Weblinc::Avatax::Line.new(item: item, tax_code: code)
+            Weblinc::Avatax::Line.new(item: item, tax_code: code).as_json
           end
         end
       end
@@ -111,11 +111,11 @@ module Weblinc
           Commit:  commit,
           DocDate: Time.now.strftime("%Y-%m-%d"),
           CompanyCode:  settings.company_code,
-          Client:  "WEBLINC #{Weblinc::VERSION::STRING} AVATAX #{Weblinc::Avatax::VERSION}",
+          Client:  "WEBLINC AVATAX CONNECTOR #{Weblinc::Avatax::VERSION}",
           DocCode:  doc_code,
           DetailLevel:  "Tax",
           Addresses:  [ distribution_address, shipping_address ],
-          Lines:  lines.as_json
+          Lines:  lines
         }
 
         if exemption_no.present?
@@ -134,6 +134,8 @@ module Weblinc
       def settings
         @settings ||= Weblinc::Avatax::Setting.current
       end
+      
+
     end
   end
 end
