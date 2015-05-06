@@ -18,6 +18,7 @@ gem "jquery-rails"
 # gem 'debugger'
 
 group :test, :development do
-  gem 'weblinc-dev_tools', '~> 0.6.3'
-  gem 'ci_reporter', '1.9.2'
+  gem 'therubyracer', '0.12.2'
+  gem 'ci_reporter', '2.0.0'
+  gem 'ci_reporter_rspec', '1.0.0'
 end

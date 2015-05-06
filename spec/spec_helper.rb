@@ -2,7 +2,7 @@
 ENV["RAILS_ENV"] ||= 'test'
 
 require "#{File.dirname(__FILE__)}/dummy/config/environment"
-require 'weblinc/testing/core/spec_helper'
+require 'weblinc/testing/spec_helper'
 require 'fixtures/fixture_methods'
 
 RSpec.configure do |config|
@@ -15,4 +15,15 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
+
+  # rspec-rails 3 will no longer automatically infer an example group's spec type
+  # from the file location. You can explicitly opt-in to the feature using this
+  # config option.
+  # To explicitly tag specs without using automatic inference, set the `:type`
+  # metadata manually:
+  #
+  #     describe ThingsController, :type => :controller do
+  #       # Equivalent to being in spec/controllers
+  #     end
+  config.infer_spec_type_from_file_location!
 end
