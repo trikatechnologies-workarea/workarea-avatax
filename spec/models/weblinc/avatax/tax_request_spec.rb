@@ -15,7 +15,8 @@ module Weblinc
 
       let(:user) { create_user }
       let!(:order) { create_checkout_order(email: user.email) }
-      let!(:tax_request) { Weblinc::Avatax::TaxRequest.new(order: order, user: user) }
+      let!(:shipments) { Weblinc::Shipping::Shipment.where(number: order.number) }
+      let!(:tax_request) { Weblinc::Avatax::TaxRequest.new(order, shipments, user: user) }
 
       describe '#doc_code' do
         it 'should be present' do
@@ -37,8 +38,7 @@ module Weblinc
           let!(:order) { create_order(email: long_email) }
 
           let!(:tax_request) do
-            Weblinc::Avatax::TaxRequest.new(
-              order: order,
+            Weblinc::Avatax::TaxRequest.new(order, shipments,
               user: user,
               doc_type: 'SalesInvoice'
             )
@@ -60,9 +60,13 @@ module Weblinc
         end
       end
 
-      describe '#shipping_line' do
-        it 'should be a hash' do
-          expect(tax_request.shipping_line.class).to eq(Hash)
+      describe '#shipping_lines' do
+        it 'should be an Array' do
+          expect(tax_request.shipping_lines.class).to eq(Array)
+        end
+
+        it 'should not be empty' do
+          expect(tax_request.shipping_lines).not_to be_empty
         end
       end
 
@@ -81,8 +85,8 @@ module Weblinc
           expect(tax_request.lines).to include(*tax_request.item_lines)
         end
 
-        it 'should include #shipping_line' do
-          expect(tax_request.lines).to include(tax_request.shipping_line)
+        it 'should include #shipping_lines' do
+          expect(tax_request.lines).to include(*tax_request.shipping_lines)
         end
       end
 
@@ -100,19 +104,18 @@ module Weblinc
 
       describe '#commit' do
         it 'should be false' do
-          expect(tax_request.commit).to be_false
+          expect(tax_request.commit).to be_falsey
         end
 
         context 'custom value passed in' do
           let!(:tax_request) do
-            Weblinc::Avatax::TaxRequest.new(
-              order: order,
+            Weblinc::Avatax::TaxRequest.new(order, shipments,
               commit: true
             )
           end
 
           it 'reflects the passed in value' do
-            expect(tax_request.commit).to be_true
+            expect(tax_request.commit).to be_truthy
           end
         end
       end
@@ -124,8 +127,7 @@ module Weblinc
 
         context 'custom value passed in' do
           let!(:tax_request) do
-            Weblinc::Avatax::TaxRequest.new(
-              order: order,
+            Weblinc::Avatax::TaxRequest.new(order, shipments,
               doc_type: 'SalesInvoice'
             )
           end
@@ -159,7 +161,6 @@ module Weblinc
           let(:user) { create_user(customer_usage_type: 'A') }
 
           it 'should be present' do
-            puts "cust usage type: #{user.customer_usage_type}"
             expect(tax_request.usage_type).to be_present
           end
         end
@@ -180,7 +181,7 @@ module Weblinc
 
         describe '#commit' do
           it 'should be false' do
-            expect(tax_request.commit).to be_false
+            expect(tax_request.commit).to be_falsey
           end
         end
 

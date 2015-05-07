@@ -31,14 +31,15 @@ module Weblinc
         item_lines.map do |line|
           {
             sku: line['LineNo'].split('-').first,
-            amount: line['Tax'].to_m 
+            amount: line['Tax'].to_m
           }
         end
       end
 
       def shipping_adjustments
         shipping_lines.map do |line|
-          { sku: line['LineNo'], amount: line['Tax'].to_m }
+          shipment_id = line['LineNo'].replace(::TaxRequest::SHIPPING_LINE_PREFIX, '')
+          { shipment_id: shipment_id, amount: line['Tax'].to_m }
         end
       end
 
