@@ -19,12 +19,16 @@ module Weblinc
 
       def item_lines
         return [] unless success?
-        avatax_response['TaxLines'].reject { |l| l['LineNo'] == 'SHIPPING' }
+        avatax_response['TaxLines'].reject do |tax_line|
+          tax_line['LineNo'] =~ /#{Weblinc::Avatax::TaxRequest::SHIPPING_LINE_PREFIX}/
+        end
       end
 
       def shipping_lines
         return [] unless success?
-        avatax_response['TaxLines'].select { |l| l['LineNo'] == 'SHIPPING' }
+        avatax_response['TaxLines'].select do |tax_line|
+          tax_line['LineNo'] =~ /#{Weblinc::Avatax::TaxRequest::SHIPPING_LINE_PREFIX}/
+        end
       end
 
       def item_adjustments
@@ -38,7 +42,7 @@ module Weblinc
 
       def shipping_adjustments
         shipping_lines.map do |line|
-          shipment_id = line['LineNo'].replace(::TaxRequest::SHIPPING_LINE_PREFIX, '')
+          shipment_id = line['LineNo'].gsub(Weblinc::Avatax::TaxRequest::SHIPPING_LINE_PREFIX, '')
           { shipment_id: shipment_id, amount: line['Tax'].to_m }
         end
       end

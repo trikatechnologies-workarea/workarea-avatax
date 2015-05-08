@@ -29,8 +29,8 @@ module Weblinc
           end
 
           response.shipping_adjustments.each do |adj|
-            shipments.detect { |s| s.id == adj[:shipment_id]  }
-            shipment.shipping_method.adjust_pricing(
+            shipment = shipments.detect { |s| s.id.to_s == adj[:shipment_id]  }
+            shipment.adjust_pricing(
               price: 'tax',
               calculator: self.class.name,
               description: 'Sales Tax',
