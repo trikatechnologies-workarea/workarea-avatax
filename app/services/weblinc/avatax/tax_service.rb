@@ -1,10 +1,11 @@
 module Weblinc
   module Avatax
     class TaxService
+      attr_reader :order, :shipments
       # AvaTax::TaxService doesn't provide a good way to change settings thru initialize
       def initialize(order, shipments=nil)
         @order = order
-        @shipments = shipments || Weblinc::Shipping::Shipment.where(order: order.number)
+        @shipments = shipments || Weblinc::Shipping::Shipment.where(number: order.number)
         @user = Weblinc::User.find_by(email: order.email)
 
         settings = Weblinc::Avatax::Setting.current
