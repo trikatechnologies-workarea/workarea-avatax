@@ -6,7 +6,7 @@ module Weblinc
       def initialize(order, shipments=nil)
         @order = order
         @shipments = shipments || Weblinc::Shipping::Shipment.where(number: order.number)
-        @user = Weblinc::User.find_by(email: order.email)
+        @user = Weblinc::User.where(email: order.email).first
 
         settings = Weblinc::Avatax::Setting.current
         AvaTax.configure do
