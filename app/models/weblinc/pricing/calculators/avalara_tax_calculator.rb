@@ -15,6 +15,7 @@ module Weblinc
         end
 
         def adjust
+          return if shipments.map(&:address).compact.empty?
           return unless order.call_avatax_api_flag
           response = Weblinc::Avatax::TaxService.new(order, shipments).get
 
