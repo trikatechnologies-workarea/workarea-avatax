@@ -83,12 +83,14 @@ module Weblinc
       def shipping_lines
         return [] if @shipments.nil?
         @shipments.map do |shipment|
+          adjustments = shipment.price_adjustments.select { |adj| adj.price == 'shipping' }
+
           {
             LineNo: "SHIPPING-#{shipment.id}",
             ItemCode: "SHIPPING",
             Description: shipment.shipping_method.name,
             Qty: 1,
-            Amount: shipment.price_adjustments.sum.to_s,
+            Amount: adjustments.sum(&:amount).to_s,
             TaxCode: 'FR',
             OriginCode: DEFAULT_ORIGIN_CODE,
             DestinationCode: DEFAULT_DEST_CODE
@@ -118,7 +120,7 @@ module Weblinc
           Client:  "WEBLINC AVATAX CONNECTOR #{Weblinc::Avatax::VERSION}",
           DocCode:  doc_code,
           DetailLevel:  "Tax",
-          Addresses:  [ distribution_address ], # shipping_address ],
+          Addresses:  [distribution_address, shipping_address],
           Lines:  lines
         }
 
