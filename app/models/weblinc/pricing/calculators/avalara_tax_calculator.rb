@@ -15,8 +15,9 @@ module Weblinc
         end
 
         def adjust
+          return if shipments.map(&:address).compact.empty?
           return unless order.call_avatax_api_flag
-          response = Weblinc::Avatax::TaxService.new(order).get
+          response = Weblinc::Avatax::TaxService.new(order, shipments).get
 
           response.item_adjustments.each do |adj|
             item = order.items.detect { |i| i.sku == adj[:sku] }
@@ -29,7 +30,8 @@ module Weblinc
           end
 
           response.shipping_adjustments.each do |adj|
-            order.shipping_method.adjust_pricing(
+            shipment = shipments.detect { |s| s.id.to_s == adj[:shipment_id]  }
+            shipment.adjust_pricing(
               price: 'tax',
               calculator: self.class.name,
               description: 'Sales Tax',

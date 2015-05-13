@@ -3,7 +3,6 @@ module Weblinc
     class Setting
       include Mongoid::Document
       include Mongoid::Enum
-      include SiteSpecific
 
       field :account_number, type: String
       field :license_key,    type: String
@@ -12,15 +11,14 @@ module Weblinc
 
       enum :doc_handling, [:commit, :post, :none], default: :commit
 
-      def self.find_or_create_by_id(id)
-        where(id: id).first || new.tap do |setting|
-          setting.id = id
+      def self.find_or_create
+        first || new.tap do |setting|
           setting.save!
         end
       end
 
       def self.current
-        @@current ||= find_or_create_by_id(Site.current.id)
+        @@current ||= find_or_create
       end
     end
   end

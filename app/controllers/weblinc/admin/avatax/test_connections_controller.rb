@@ -2,7 +2,7 @@ module Weblinc
   class Admin::Avatax::TestConnectionsController < Admin::ApplicationController
     def show
       current_settings = Weblinc::Avatax::Setting.current
-      @connection = Weblinc::Avatax::TaxService.new.ping
+      @connection = Weblinc::Avatax::TaxService.ping
       @settings =
         {
           service_url:    current_settings[:service_url],

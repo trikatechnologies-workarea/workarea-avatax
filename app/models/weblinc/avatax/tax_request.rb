@@ -6,16 +6,18 @@ module Weblinc
 
       DEFAULT_DEST_CODE = "DEST"
       DEFAULT_ORIGIN_CODE = "ORIGIN"
+      SHIPPING_LINE_PREFIX = "SHIPPING-"
 
-      def initialize(options = {})
-        @order = options[:order]
+      def initialize(order, shipments, options = {})
+        @order = order
+        @shipments = shipments
         @commit = options[:commit]
         @doc_type = options[:doc_type]
         @user = options[:user]
       end
 
       # PurchaseOrder type means that the document will not be saved
-      # PurchaseInvoice type means that the document will be saved and 
+      # PurchaseInvoice type means that the document will be saved and
       # appear in the Avatax admin
       def doc_type
         if settings.doc_handling == :none || @doc_type.nil?
@@ -53,14 +55,15 @@ module Weblinc
       end
 
       def shipping_address
+        address = @shipments.first.address
         {
           AddressCode: DEFAULT_DEST_CODE,
-          Line1: order.shipping_address.street,
-          Line2: order.shipping_address.street_2,
-          City: order.shipping_address.city,
-          Region: order.shipping_address.region,
-          Country: order.shipping_address.country,
-          PostalCode: order.shipping_address.postal_code
+          Line1: address.street,
+          Line2: address.street_2,
+          City: address.city,
+          Region: address.region,
+          Country: address.country,
+          PostalCode: address.postal_code
         }
       end
 
@@ -77,23 +80,26 @@ module Weblinc
         end
       end
 
-      def shipping_line
-        shipping_total = order.shipping_method.price_adjustments.sum
+      def shipping_lines
+        return [] if @shipments.nil?
+        @shipments.map do |shipment|
+          adjustments = shipment.price_adjustments.select { |adj| adj.price == 'shipping' }
 
-        {
-          LineNo: "SHIPPING",
-          ItemCode: "SHIPPING",
-          Description: @order.shipping_method.name,
-          Qty: 1,
-          Amount: shipping_total.to_s,
-          TaxCode: 'FR',
-          OriginCode: DEFAULT_ORIGIN_CODE,
-          DestinationCode: DEFAULT_DEST_CODE
-        }
+          {
+            LineNo: "SHIPPING-#{shipment.id}",
+            ItemCode: "SHIPPING",
+            Description: shipment.shipping_method.name,
+            Qty: 1,
+            Amount: adjustments.sum(&:amount).to_s,
+            TaxCode: 'FR',
+            OriginCode: DEFAULT_ORIGIN_CODE,
+            DestinationCode: DEFAULT_DEST_CODE
+          }
+        end
       end
 
       def lines
-        item_lines.push(shipping_line)
+        item_lines.concat(shipping_lines)
       end
 
       def exemption_no
@@ -114,7 +120,7 @@ module Weblinc
           Client:  "WEBLINC AVATAX CONNECTOR #{Weblinc::Avatax::VERSION}",
           DocCode:  doc_code,
           DetailLevel:  "Tax",
-          Addresses:  [ distribution_address, shipping_address ],
+          Addresses:  [distribution_address, shipping_address],
           Lines:  lines
         }
 
@@ -134,7 +140,7 @@ module Weblinc
       def settings
         @settings ||= Weblinc::Avatax::Setting.current
       end
-      
+
 
     end
   end

@@ -1,10 +1,12 @@
 module Weblinc
   module Avatax
     class TaxService
-
+      attr_reader :order, :shipments
       # AvaTax::TaxService doesn't provide a good way to change settings thru initialize
-      def initialize(order=nil)
+      def initialize(order, shipments=nil)
         @order = order
+        @shipments = shipments || Weblinc::Shipping::Shipment.where(number: order.number)
+        @user = Weblinc::User.where(email: order.email).first
 
         settings = Weblinc::Avatax::Setting.current
         AvaTax.configure do
@@ -15,7 +17,7 @@ module Weblinc
       end
 
       def get
-        request = Weblinc::Avatax::TaxRequest.new(order: @order)
+        request = Weblinc::Avatax::TaxRequest.new(@order, @shipments, user: @user)
         endpoint = 'GetTax (get)'
 
         api_response = log(request, endpoint) do
@@ -29,8 +31,8 @@ module Weblinc
       end
 
       def post
-        request = Weblinc::Avatax::TaxRequest.new(
-          order: @order,
+        request = Weblinc::Avatax::TaxRequest.new(@order, @shipments,
+          user: @user,
           doc_type: 'SalesInvoice'
         )
         endpoint = 'GetTax (post)'
@@ -46,8 +48,8 @@ module Weblinc
       end
 
       def commit
-        request = Weblinc::Avatax::TaxRequest.new(
-          order: @order,
+        request = Weblinc::Avatax::TaxRequest.new(@order, @shipments,
+          user: @user,
           doc_type: 'SalesInvoice',
           commit: true
         )
@@ -63,9 +65,17 @@ module Weblinc
         )
       end
 
-      def ping
+      def self.ping
+        settings = Weblinc::Avatax::Setting.current
+        AvaTax.configure do
+          account_number settings.account_number
+          license_key    settings.license_key
+          service_url    settings.service_url
+        end
+        ping_client = AvaTax::TaxService.new
+
         begin  # catch exception if service URL is not valid
-          api_result = avatax_client.ping
+          api_result = ping_client.ping
         rescue NoMethodError, ::OpenSSL::SSL::SSLError, ::Errno::ETIMEDOUT => e
           # avatax client ping method doesn't really deal well with bad domain
           # settings, so we catch some exceptions to handle them a little better

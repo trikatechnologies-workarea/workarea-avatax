@@ -21,15 +21,18 @@ module Weblinc
         product = create_product(variants: [{ sku: sku, regular: 5.to_m, tax_code: 'P0000000' }])
 
         Weblinc::Order.new(attributes).tap do |order|
-          order.set_shipping_method(
+          shipment = Weblinc::Shipping::Shipment.create!(number: order.number)
+
+          shipment.set_shipping_method(
             id: shipping_method.id,
             name: shipping_method.name,
             base_price: shipping_method.rates.first.price,
             tax_code: shipping_method.tax_code
           )
+
           order.items.build(product_id: product.id, sku: sku, quantity: 2)
 
-          order.set_shipping_address(
+          shipment.set_address(
             first_name:  Faker::Name.first_name,
             last_name:   Faker::Name.last_name,
             street:      Faker::Address.street_address,
