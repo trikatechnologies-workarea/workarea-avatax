@@ -49,7 +49,7 @@ module Weblinc
 
       def errors
         return [] if success?
-        avatax_response['Messages']
+        avatax_response['Messages'].map { |msg| msg['Summary'] }
       end
 
       private
