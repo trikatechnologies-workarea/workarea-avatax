@@ -11,9 +11,9 @@
       .wl-section
         %h2 Test Connection
 
-        
+
         - if @connection.errors.any?
-          - @connection[:errors].each do |message|
+          - @connection.errors.each do |message|
             .wl-message--error
               %p.type
                 %span Error
@@ -29,7 +29,7 @@
             = label_tag "settings[#{field}]", nil, class: 'name' do
               %span.text= field.to_s.titleize
             %br
-            %span.text= value.to_s 
+            %span.text= value.to_s
 
     .wl-panel--buttons
       .wl-action-group
