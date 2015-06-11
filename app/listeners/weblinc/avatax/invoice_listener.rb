@@ -1,6 +1,7 @@
 module Weblinc
   module Avatax
     class InvoiceListener
+      extend Listener
       class << self
         def weblinc_order_placed(payload)
           settings = Weblinc::Avatax::Setting.current
