@@ -37,7 +37,7 @@ via their own order management system.
   gem 'weblinc-avatax', '~> <version>'
 ```
 
-#### 2) Configure the avatax plugin with the merchant's distribution center inside the host app `config/initializers/weblinc.rb` file.
+#### 2) Configure the avatax plugin with the merchant's distribution center inside the host app's `config/initializers/weblinc.rb` file.
 ```ruby
   Weblinc::Avatax.configure do |config|
     config.dist_center = {
