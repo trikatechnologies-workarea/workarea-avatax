@@ -10,7 +10,7 @@ module Weblinc
       end
 
       def description
-        item.sku_details.values.join(' ')
+        "#{item.product_details["name"]} #{item.sku_details.values.join(' ')}"
       end
 
       def amount
