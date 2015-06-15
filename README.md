@@ -34,10 +34,10 @@ via their own order management system.
 
 #### 1) Add the Application gem to your gemfile in host application.
 ```ruby
-  gem 'weblinc-avatax-app', path: "path/to/your/weblinc-avatax-app"
+  gem 'weblinc-avatax', '~> <version>'
 ```
 
-#### 2) Set a distribution center in host app config/initializers/weblinc.rb
+#### 2) Configure the avatax plugin with the merchant's distribution center inside the host app `config/initializers/weblinc.rb` file.
 ```ruby
   Weblinc::Avatax.configure do |config|
     config.dist_center = {
