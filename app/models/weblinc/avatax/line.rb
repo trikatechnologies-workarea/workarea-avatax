@@ -25,10 +25,6 @@ module Weblinc
         item.sku
       end
 
-      def line_no
-        "#{item.sku}-#{tax_code}"
-      end
-
       def code_amount
         code_price_adjustments.sum(&:amount)
       end
@@ -58,7 +54,6 @@ module Weblinc
       def as_json
         {
           # Required Parameters
-          LineNo: line_no,
           ItemCode: item_code,
           Qty: quantity,
           Amount: amount,
