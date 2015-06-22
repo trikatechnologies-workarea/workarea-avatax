@@ -98,7 +98,9 @@ module Weblinc
       end
 
       def lines_as_json
-        item_lines.map(&:as_json).concat(shipping_lines)
+        all_lines = item_lines.map(&:as_json).concat(shipping_lines)
+        all_lines.each.with_index { |li, i| li[:LineNo] = i }
+        all_lines
       end
 
 
