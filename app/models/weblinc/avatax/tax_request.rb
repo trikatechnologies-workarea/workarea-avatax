@@ -68,14 +68,14 @@ module Weblinc
       end
 
       def item_lines
-        order.items.flat_map.with_index do |item, i|
+        @item_lines ||= @order.items.flat_map.with_index do |item, i|
           adjustments = item.price_adjustments.select do |a|
             !a.discount? && a.price == 'item'
           end
           tax_codes = adjustments.map { |a| a.data['tax_code'] }
 
           tax_codes.uniq.map do |code|
-            Weblinc::Avatax::Line.new(item: item, tax_code: code).as_json
+            Weblinc::Avatax::Line.new(item: item, tax_code: code)
           end
         end
       end
@@ -86,7 +86,6 @@ module Weblinc
           adjustments = shipment.price_adjustments.select { |adj| adj.price == 'shipping' }
 
           {
-            LineNo: "SHIPPING-#{shipment.id}",
             ItemCode: "SHIPPING",
             Description: shipment.shipping_method.name,
             Qty: 1,
@@ -98,9 +97,10 @@ module Weblinc
         end
       end
 
-      def lines
-        item_lines.concat(shipping_lines)
+      def lines_as_json
+        item_lines.map(&:as_json).concat(shipping_lines)
       end
+
 
       def exemption_no
         user.try(:exemption_no)
@@ -121,7 +121,7 @@ module Weblinc
           DocCode:  doc_code,
           DetailLevel:  "Tax",
           Addresses:  [distribution_address, shipping_address],
-          Lines:  lines
+          Lines:  lines_as_json
         }
 
         if exemption_no.present?
@@ -140,8 +140,6 @@ module Weblinc
       def settings
         @settings ||= Weblinc::Avatax::Setting.current
       end
-
-
     end
   end
 end
