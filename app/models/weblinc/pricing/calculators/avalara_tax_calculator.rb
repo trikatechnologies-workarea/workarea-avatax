@@ -20,7 +20,7 @@ module Weblinc
           response = Weblinc::Avatax::TaxService.new(order, shipments).get
 
           response.item_adjustments.each do |adj|
-            item = order.items.detect { |i| i.sku == adj[:sku] }
+            item = order.items.detect {   }
             item.adjust_pricing(
               price: 'tax',
               calculator: self.class.name,

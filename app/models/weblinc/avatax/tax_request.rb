@@ -75,34 +75,20 @@ module Weblinc
           tax_codes = adjustments.map { |a| a.data['tax_code'] }
 
           tax_codes.uniq.map do |code|
-            Weblinc::Avatax::Line.new(item: item, tax_code: code)
+            Weblinc::Avatax::ItemLine.new(item: item, tax_code: code)
           end
         end
       end
 
       def shipping_lines
-        return [] if @shipments.nil?
-        @shipments.map do |shipment|
-          adjustments = shipment.price_adjustments.select { |adj| adj.price == 'shipping' }
-
-          {
-            ItemCode: "SHIPPING",
-            Description: shipment.shipping_method.name,
-            Qty: 1,
-            Amount: adjustments.sum(&:amount).to_s,
-            TaxCode: 'FR',
-            OriginCode: DEFAULT_ORIGIN_CODE,
-            DestinationCode: DEFAULT_DEST_CODE
-          }
+        @shipping_lines ||= @shipments.map do |shipment|
+          Weblinc::Avatax::ShippingLine.new(shipment: shipment, tax_code: 'FR')
         end
       end
 
-      def lines_as_json
-        all_lines = item_lines.map(&:as_json).concat(shipping_lines)
-        all_lines.each.with_index { |li, i| li[:LineNo] = i }
-        all_lines
+      def lines
+        item_lines + shipping_lines
       end
-
 
       def exemption_no
         user.try(:exemption_no)
@@ -113,6 +99,8 @@ module Weblinc
       end
 
       def as_json
+        apply_line_numbers! # line numbers are only relevant for one request cycle
+
         hash = {
           CustomerCode: customer_code,
           DocType: doc_type,
@@ -123,7 +111,7 @@ module Weblinc
           DocCode:  doc_code,
           DetailLevel:  "Tax",
           Addresses:  [distribution_address, shipping_address],
-          Lines:  lines_as_json
+          Lines:  lines.map(&:as_json)
         }
 
         if exemption_no.present?
@@ -135,6 +123,11 @@ module Weblinc
         end
 
         hash
+      end
+
+      # applies sequential line numbers to each line per Avatax Certification
+      def apply_line_numbers!
+        lines.each.with_index { |li, k| li.line_no = k + 1 }
       end
 
       private
