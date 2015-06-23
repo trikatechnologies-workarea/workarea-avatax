@@ -1,10 +1,11 @@
 module Weblinc
   module Avatax
     class TaxResponse
-      attr_accessor :avatax_response
+      attr_accessor :avatax_response, :tax_request
 
       def initialize(options={})
         @avatax_response = options[:avatax_response] || {}
+        @tax_request = options[:tax_request]
         @endpoint = options[:endpoint]
         log_errors if errors.present?
       end
@@ -17,33 +18,27 @@ module Weblinc
         avatax_response['ResultCode'] == "Success"
       end
 
-      def item_lines
+      def order_item_lines(order_item_id)
         return [] unless success?
-        avatax_response['TaxLines'].reject do |tax_line|
-          tax_line['LineNo'] =~ /#{Weblinc::Avatax::TaxRequest::SHIPPING_LINE_PREFIX}/
-        end
-      end
+        line_nums = tax_request
+          .item_lines
+          .select { |li| li.order_item_id == order_item_id }
+          .map(&:line_no)
 
-      def shipping_lines
-        return [] unless success?
         avatax_response['TaxLines'].select do |tax_line|
-          tax_line['LineNo'] =~ /#{Weblinc::Avatax::TaxRequest::SHIPPING_LINE_PREFIX}/
+          line_nums.include?(tax_line['LineNo'].to_i)
         end
       end
 
-      def item_adjustments
-        item_lines.map do |line|
-          {
-            sku: line['LineNo'].split('-').first,
-            amount: line['Tax'].to_m
-          }
-        end
-      end
+      def shipment_lines(shipment_id)
+        return [] unless success?
+        line_nums = tax_request
+          .shipping_lines
+          .select { |li| li.shipment_id == shipment_id }
+          .map(&:line_no)
 
-      def shipping_adjustments
-        shipping_lines.map do |line|
-          shipment_id = line['LineNo'].gsub(Weblinc::Avatax::TaxRequest::SHIPPING_LINE_PREFIX, '')
-          { shipment_id: shipment_id, amount: line['Tax'].to_m }
+        avatax_response['TaxLines'].select do |tax_line|
+          line_nums.include?(tax_line['LineNo'].to_i)
         end
       end
 

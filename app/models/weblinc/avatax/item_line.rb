@@ -21,7 +21,7 @@ module Weblinc
       end
 
       def order_item_id
-        item.id
+        item.id.to_s
       end
 
       def quantity

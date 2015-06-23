@@ -29,7 +29,7 @@ module Weblinc
       end
 
       def shipment_id
-        shipment.id
+        shipment.id.to_s
       end
     end
   end

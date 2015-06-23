@@ -19,24 +19,26 @@ module Weblinc
           return unless order.call_avatax_api_flag
           response = Weblinc::Avatax::TaxService.new(order, shipments).get
 
-          response.item_adjustments.each do |adj|
-            item = order.items.detect {   }
-            item.adjust_pricing(
-              price: 'tax',
-              calculator: self.class.name,
-              description: 'Sales Tax',
-              amount: adj[:amount]
-            )
+          order.items.each do |item|
+            response.order_item_lines(item.id.to_s).each do |tax_line|
+              item.adjust_pricing(
+                price: 'tax',
+                calculator: self.class.name,
+                description: 'Sales Tax',
+                amount: tax_line['Tax'].to_m
+              )
+            end
           end
 
-          response.shipping_adjustments.each do |adj|
-            shipment = shipments.detect { |s| s.id.to_s == adj[:shipment_id]  }
-            shipment.adjust_pricing(
-              price: 'tax',
-              calculator: self.class.name,
-              description: 'Sales Tax',
-              amount: adj[:amount]
-            )
+          shipments.each do |shipment|
+            response.shipment_lines(shipment) do |tax_line|
+              shipment.adjust_pricing(
+                price: 'tax',
+                calculator: self.class.name,
+                description: 'Sales Tax',
+                amount: tax_line['Tax'].to_m
+              )
+            end
           end
         end
       end
