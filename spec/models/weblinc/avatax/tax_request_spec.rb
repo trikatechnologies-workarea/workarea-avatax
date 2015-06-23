@@ -60,7 +60,7 @@ module Weblinc
         end
 
         it 'should not have shipping lines' do
-          line_numbers = tax_request.item_lines.map { |l| l['ItemCode'] }
+          line_numbers = tax_request.item_lines.map { |l| l.item_code }
           expect(line_numbers).not_to include('SHIPPING')
         end
       end
@@ -75,7 +75,7 @@ module Weblinc
         end
 
         it 'should include shipping lines' do
-          line_numbers = tax_request.shipping_lines.map { |l| l[:ItemCode] }
+          line_numbers = tax_request.shipping_lines.map { |l| l.item_code }
           expect(line_numbers).to include('SHIPPING')
         end
       end
