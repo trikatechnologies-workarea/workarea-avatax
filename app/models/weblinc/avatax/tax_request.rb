@@ -68,38 +68,26 @@ module Weblinc
       end
 
       def item_lines
-        order.items.flat_map.with_index do |item, i|
+        @item_lines ||= @order.items.flat_map.with_index do |item, i|
           adjustments = item.price_adjustments.select do |a|
             !a.discount? && a.price == 'item'
           end
           tax_codes = adjustments.map { |a| a.data['tax_code'] }
 
           tax_codes.uniq.map do |code|
-            Weblinc::Avatax::Line.new(item: item, tax_code: code).as_json
+            Weblinc::Avatax::ItemLine.new(item: item, tax_code: code)
           end
         end
       end
 
       def shipping_lines
-        return [] if @shipments.nil?
-        @shipments.map do |shipment|
-          adjustments = shipment.price_adjustments.select { |adj| adj.price == 'shipping' }
-
-          {
-            LineNo: "SHIPPING-#{shipment.id}",
-            ItemCode: "SHIPPING",
-            Description: shipment.shipping_method.name,
-            Qty: 1,
-            Amount: adjustments.sum(&:amount).to_s,
-            TaxCode: 'FR',
-            OriginCode: DEFAULT_ORIGIN_CODE,
-            DestinationCode: DEFAULT_DEST_CODE
-          }
+        @shipping_lines ||= @shipments.map do |shipment|
+          Weblinc::Avatax::ShippingLine.new(shipment: shipment, tax_code: 'FR')
         end
       end
 
       def lines
-        item_lines.concat(shipping_lines)
+        item_lines + shipping_lines
       end
 
       def exemption_no
@@ -111,6 +99,8 @@ module Weblinc
       end
 
       def as_json
+        apply_line_numbers! # line numbers are only relevant for one request cycle
+
         hash = {
           CustomerCode: customer_code,
           DocType: doc_type,
@@ -121,7 +111,7 @@ module Weblinc
           DocCode:  doc_code,
           DetailLevel:  "Tax",
           Addresses:  [distribution_address, shipping_address],
-          Lines:  lines
+          Lines:  lines.map(&:as_json)
         }
 
         if exemption_no.present?
@@ -135,13 +125,16 @@ module Weblinc
         hash
       end
 
+      # applies sequential line numbers to each line per Avatax Certification
+      def apply_line_numbers!
+        lines.each.with_index { |li, k| li.line_no = k + 1 }
+      end
+
       private
 
       def settings
         @settings ||= Weblinc::Avatax::Setting.current
       end
-
-
     end
   end
 end

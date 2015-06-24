@@ -26,6 +26,7 @@ module Weblinc
 
         Weblinc::Avatax::TaxResponse.new(
           avatax_response: api_response,
+          tax_request: request,
           endpoint: 'GetTax (get)'
         )
       end
@@ -43,6 +44,7 @@ module Weblinc
 
         Weblinc::Avatax::TaxResponse.new(
           avatax_response: api_response,
+          tax_request: request,
           endpoint: endpoint
         )
       end
@@ -61,6 +63,7 @@ module Weblinc
 
         Weblinc::Avatax::TaxResponse.new(
           avatax_response: api_response,
+          tax_request: request,
           endpoint: endpoint
         )
       end
