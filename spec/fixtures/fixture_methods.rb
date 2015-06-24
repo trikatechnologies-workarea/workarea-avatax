@@ -48,6 +48,25 @@ module Weblinc
           order.save!
         end
       end
+
+      def mock_successful_api_response(request)
+        request.apply_line_numbers!
+
+        tax_lines = request.lines.map.with_index do |line, k|
+          {
+            'LineNo' => line.line_no.to_s,
+            'Tax' => '1.5',
+            'TaxCode' => line.tax_code,
+            'ItemCode' => line.item_code
+          }
+        end
+
+        {
+          "ResultCode" => "Success",
+          "DocCode" => "ORDER-#{order.id}",
+          "TaxLines" => tax_lines,
+        }
+      end
     end
   end
 end
