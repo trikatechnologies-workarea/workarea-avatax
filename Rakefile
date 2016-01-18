@@ -16,7 +16,7 @@ desc "Release version #{Weblinc::Avatax::VERSION} of the gem"
 task :release do
   host = "https://#{ENV['BUNDLE_GEMS__WEBLINC__COM']}@gems.weblinc.com"
 
-  system "git tag -a v#{Weblinc::Avatax::VERSION} -m 'Tagging #{Weblinc::Paypal::VERSION}'"
+  system "git tag -a v#{Weblinc::Avatax::VERSION} -m 'Tagging #{Weblinc::Avatax::VERSION}'"
   system 'git push --tags'
 
   system "gem build weblinc-paypal.gemspec"
