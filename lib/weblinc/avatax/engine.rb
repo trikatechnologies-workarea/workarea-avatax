@@ -15,14 +15,14 @@ module Weblinc
       end
 
       initializer 'weblinc.avatax.templates' do
-        Weblinc::Admin.config.views.settings_menu.append(
+        Plugin.append_partials(
           'weblinc/admin/menus/avatax_settings'
         )
 
-        Weblinc::Admin.config.views.user_permissions.append(
+        Plugin.append_partials(
           'weblinc/admin/users/avatax_settings'
         )
-        Weblinc::Admin.config.views.user_properties.append(
+        Plugin.append_partials(
           'weblinc/admin/users/user_properties_fields'
         )
       end
