@@ -19,7 +19,7 @@ task :release do
   system "git tag -a v#{Weblinc::Avatax::VERSION} -m 'Tagging #{Weblinc::Avatax::VERSION}'"
   system 'git push --tags'
 
-  system "gem build weblinc-paypal.gemspec"
-  system "gem push weblinc-paypal-#{Weblinc::Avatax::VERSION}.gem --host #{host}"
-  system "rm weblinc-paypal-#{Weblinc::Avatax::VERSION}.gem"
+  system "gem build weblinc-avatax.gemspec"
+  system "gem push weblinc-avatax-#{Weblinc::Avatax::VERSION}.gem --host #{host}"
+  system "rm weblinc-avatax-#{Weblinc::Avatax::VERSION}.gem"
 end
