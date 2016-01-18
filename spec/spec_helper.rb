@@ -4,6 +4,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require "#{File.dirname(__FILE__)}/dummy/config/environment"
 require 'weblinc/testing/spec_helper'
 require 'fixtures/fixture_methods'
+require 'faker'
 
 RSpec.configure do |config|
   config.mock_with :rspec
