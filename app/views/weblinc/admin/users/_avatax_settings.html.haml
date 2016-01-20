@@ -1,13 +1,16 @@
-%tr
-  %th AvaTax Settings
-  %td= check_box_tag 'permissions[avatax_settings][view]', true, @permissions.authorized_to?(:view, :avatax_settings), title: 'AvaTax Settings: View'
-  %td -
-  %td= check_box_tag 'permissions[avatax_settings][edit]', true, @permissions.authorized_to?(:edit, :avatax_settings), title: 'AvaTax Settings: Edit'
-  %td -
-%tr
-  %th AvaTax Test Connection
-  %td= check_box_tag 'permissions[avatax_test_connections][view]', true, @permissions.authorized_to?(:view, :avatax_test_connections), title: 'AvaTax Test Connection: View'
-  %td -
-  %td -
-  %td -
-
+.section
+  %h3 AvaTax Settings
+  .button-property
+    .value= check_box :user, :avatax_settings_access
+    = label_tag 'user[avatax_settings_access]', nil, class: 'button-property__name' do
+      %span.button-property__text
+        %span.icon.icon--pages
+        %strong AvaTax Settings
+        %span - View and edit AvaTax configuration
+  .button-property
+    .value= check_box :user, :avatax_test_connections_access
+    = label_tag 'user[avatax_test_connections_access]', nil, class: 'button-property__name' do
+      %span.button-property__text
+        %span.icon.icon--pages
+        %strong AvaTax Test Connection
+        %span - Be able to test AvaTax connection

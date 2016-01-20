@@ -16,13 +16,16 @@ module Weblinc
 
       initializer 'weblinc.avatax.templates' do
         Plugin.append_partials(
+          'admin.store_menu',
           'weblinc/admin/menus/avatax_settings'
         )
 
         Plugin.append_partials(
+          'admin.user_permissions',
           'weblinc/admin/users/avatax_settings'
         )
         Plugin.append_partials(
+          'admin.user_properties',
           'weblinc/admin/users/user_properties_fields'
         )
       end

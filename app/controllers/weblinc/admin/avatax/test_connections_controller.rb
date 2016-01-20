@@ -1,5 +1,7 @@
 module Weblinc
   class Admin::Avatax::TestConnectionsController < Admin::ApplicationController
+    required_permissions :avatax_test_connections
+
     def show
       current_settings = Weblinc::Avatax::Setting.current
       @connection = Weblinc::Avatax::TaxService.ping

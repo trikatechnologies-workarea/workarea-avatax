@@ -1,37 +1,30 @@
 - @title = ['AvaTax Test Connection']
 
-.wl-avatax-test-connection-view.wl-view
-
+.avatax-test-connection-view.wl-view
   %h1 AvaTax Test Connection
-
   = form_tag avatax_test_connection_url, method: :patch do
-
-    .wl-tabs
-
-      .wl-section
+    .tabs
+      .section
         %h2 Test Connection
-
-
         - if @connection.errors.any?
           - @connection.errors.each do |message|
-            .wl-message--error
+            .message--error
               %p.type
                 %span Error
               %p.message= message
         - else
-          .wl-message--success
+          .message--success
             %p.type
               %span Success
             %p.message #{@connection.status}
 
         - @settings.each do |field, value|
-          .wl-property
+          .property
             = label_tag "settings[#{field}]", nil, class: 'name' do
               %span.text= field.to_s.titleize
             %br
             %span.text= value.to_s
-
-    .wl-panel--buttons
-      .wl-action-group
+    .panel--buttons
+      .action-group
         %p= link_to 'Edit Settings', avatax_settings_url, class: 'wl-text-button--muted'
         %p= link_to 'Refresh', avatax_test_connection_url, class: 'wl-text-button--muted'

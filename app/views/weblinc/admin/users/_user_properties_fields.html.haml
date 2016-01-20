@@ -1,12 +1,11 @@
-.wl-property
-  = label_tag 'user[exemption_no]', nil, class: 'name' do
-    %span.text Avatax Exemption Number
-  .wl-value
-    = text_field_tag 'user[exemption_no]', @user.exemption_no, class: 'wl-text-box'
+.property
+  = label_tag 'user[exemption_no]', nil, class: 'property__name' do
+    %span.property__text Avatax Exemption Number
+  .value= text_field_tag 'user[exemption_no]', @user.exemption_no, class: 'text-box'
 
-.wl-property
-  = label_tag 'user[customer_usage_type]', nil, class: 'name' do
-    %span.text Avatax Entity/Use Code
-  .wl-value
+.property
+  = label_tag 'user[customer_usage_type]', nil, class: 'property__name' do
+    %span.property__text Avatax Entity/Use Code
+  .value
     = select_tag 'user[customer_usage_type]', options_from_collection_for_select(Weblinc::Avatax::UsageType.all, 'code', 'name', @user.customer_usage_type), prompt: 'Not Applicable'
 

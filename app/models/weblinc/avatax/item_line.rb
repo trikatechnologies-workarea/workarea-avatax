@@ -13,7 +13,7 @@ module Weblinc
       end
 
       def description
-        "#{item.product_details["name"]} #{item.sku_details.values.join(' ')}"
+        "#{item.product_attributes['name']} #{item.product_attributes['variants'][0]['details'].values.join(' ')}"
       end
 
       def item_code
