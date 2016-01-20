@@ -1,29 +1,27 @@
 - @title = ['AvaTax Settings']
 
-.wl-avatax-settings-view.wl-view
+.avatax-settings-view.view
 
   %h1 AvaTax Settings
 
   = form_tag avatax_settings_url, method: :patch do
-
     .wl-tabs
-
-      .wl-section
+      .section
         %h2 Account Info
         %p Account Number: This is the account number that needs to be used to authenticate your API call (this is not an Admin Console login). It will be a ten-digit number (e.g. 1100012345)
         %p License Key: This is the license key that needs to be set in the credentials portion of your connector (this is not an Admin Console Password). It will be a 16-character string (e.g. 1A2B3C4D5E6F7G8H).
         %p Company Code: The code that identifies the company in the AvaTax account. This code is declared during the company setup in the AvaTax Admin Console.
         - @settings_drop.each do |field, options_hash|
-          .wl-property
+          .property
             = label_tag "settings[#{field}]", nil, class: 'name' do
               %span.text= field.to_s.titleize
-            .wl-value= select_tag "settings[#{field}]", 
+            .value= select_tag "settings[#{field}]",
               options_for_select(options_hash[:container],selected: options_hash[:selected])
         - @settings_text.each do |field, value|
-          .wl-property
+          .property
             = label_tag "settings[#{field}]", nil, class: 'name' do
               %span.text= field.to_s.titleize
-            .wl-value= text_field_tag "settings[#{field}]", value, class: 'wl-text-box'
+            .value= text_field_tag "settings[#{field}]", value, class: 'text-box'
 
         %h3 Tax Document Handling
         %p
@@ -36,8 +34,8 @@
           = radio_button_tag "settings[doc_handling]", :none, @current_settings.doc_handling == :none
           = label_tag :settings_doc_handling_none, "Do nothing after checkout"
 
-    .wl-panel--buttons
-      .wl-action-group
-        %p= link_to 'Cancel', :back, class: 'wl-text-button--muted'
-        %p= link_to 'Test Connections', avatax_test_connection_url, class: 'wl-text-button--muted'
-        %p= button_tag 'Save Changes', value: 'save_settings', class: 'wl-button'
+    .panel--buttons
+      .action-group
+        %p= link_to 'Cancel', :back, class: 'text-button--muted'
+        %p= link_to 'Test Connections', avatax_test_connection_url, class: 'text-button--muted'
+        %p= button_tag 'Save Changes', value: 'save_settings', class: 'button'

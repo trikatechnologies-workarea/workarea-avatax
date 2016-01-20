@@ -1,9 +1,9 @@
 - @title = ['AvaTax Test Connection']
 
-.avatax-test-connection-view.wl-view
+.avatax-test-connection-view.view
   %h1 AvaTax Test Connection
   = form_tag avatax_test_connection_url, method: :patch do
-    .tabs
+    .wl-tabs
       .section
         %h2 Test Connection
         - if @connection.errors.any?
@@ -26,5 +26,5 @@
             %span.text= value.to_s
     .panel--buttons
       .action-group
-        %p= link_to 'Edit Settings', avatax_settings_url, class: 'wl-text-button--muted'
-        %p= link_to 'Refresh', avatax_test_connection_url, class: 'wl-text-button--muted'
+        %p= link_to 'Edit Settings', avatax_settings_url, class: 'text-button--muted'
+        %p= link_to 'Refresh', avatax_test_connection_url, class: 'text-button--muted'
