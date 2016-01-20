@@ -13,7 +13,9 @@ module Weblinc
       end
 
       def description
-        "#{item.product_attributes['name']} #{item.product_attributes['variants'][0]['details'].values.join(' ')}"
+        unless @item.product_attributes.empty?
+          "#{item.product_attributes['name']} #{item.product_attributes['variants'][0]['details'].values.join(' ')}"
+        end
       end
 
       def item_code

@@ -12,7 +12,7 @@ module Weblinc
         AvaTax.configure do
           account_number settings.account_number
           license_key    settings.license_key
-          service_url    settings.service_url
+          service_url    settings.service_url || 'https://development.avalara.net'
         end
       end
 

@@ -9,13 +9,9 @@
         - if @connection.errors.any?
           - @connection.errors.each do |message|
             .message--error
-              %p.type
-                %span Error
               %p.message= message
         - else
           .message--success
-            %p.type
-              %span Success
             %p.message #{@connection.status}
 
         - @settings.each do |field, value|
