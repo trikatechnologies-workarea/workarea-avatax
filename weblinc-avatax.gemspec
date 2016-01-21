@@ -7,8 +7,8 @@ require "weblinc/avatax/version"
 Gem::Specification.new do |s|
   s.name        = "weblinc-avatax"
   s.version     = Weblinc::Avatax::VERSION
-  s.authors     = ["Adam Clarke", "Mark Anderson"]
-  s.email       = ["adam@revelry.co"]
+  s.authors     = ["Adam Clarke", "Mark Anderson", "Bryan Alexander"]
+  s.email       = ["adam@revelry.co, balexander@weblinc.com"]
   s.summary     = "Avalara Tax Plugin for the Weblinc Ecommerce Platform"
   s.description = "Avatax is a service for sales tax calculation and compliance"
   s.license     = "MIT"
