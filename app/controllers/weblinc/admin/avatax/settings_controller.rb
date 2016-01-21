@@ -1,6 +1,7 @@
 module Weblinc
-
   class Admin::Avatax::SettingsController < Admin::ApplicationController
+    required_permissions :avatax_settings
+
     def show
        @current_settings = Weblinc::Avatax::Setting.current
        @settings_drop = settings_drop_hash(@current_settings)
@@ -15,9 +16,9 @@ module Weblinc
     end
 
      private
- 
+
      def settings_text_hash(setting)
-       { 
+       {
          account_number: setting[:account_number],
          license_key:    setting[:license_key],
          company_code:   setting[:company_code]

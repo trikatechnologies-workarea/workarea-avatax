@@ -21,6 +21,7 @@ via their own order management system.
    * State by State sales tax
    * Automated Filing and Remittance
    * Exemption Certificate Management
+      - http://developer.avalara.com/api-docs/designing-your-integration/handling-tax-exempt-customers
 
 ## Requirements
   * Access to your Weblinc administration
