@@ -7,6 +7,7 @@ module Weblinc
         @order = order
         @shipments = shipments || Weblinc::Shipping::Shipment.where(number: order.number)
         @user = Weblinc::User.where(email: order.email).first
+        @payment = Weblinc::Payment.where(_id: order.number)
 
         settings = Weblinc::Avatax::Setting.current
         AvaTax.configure do
@@ -17,7 +18,7 @@ module Weblinc
       end
 
       def get
-        request = Weblinc::Avatax::TaxRequest.new(@order, @shipments, user: @user)
+        request = Weblinc::Avatax::TaxRequest.new(@order, @shipments, user: @user, payment: @payment)
         endpoint = 'GetTax (get)'
 
         api_response = log(request, endpoint) do
@@ -34,6 +35,7 @@ module Weblinc
       def post
         request = Weblinc::Avatax::TaxRequest.new(@order, @shipments,
           user: @user,
+          payment: @payment,
           doc_type: 'SalesInvoice'
         )
         endpoint = 'GetTax (post)'
@@ -52,6 +54,7 @@ module Weblinc
       def commit
         request = Weblinc::Avatax::TaxRequest.new(@order, @shipments,
           user: @user,
+          payment: @payment,
           doc_type: 'SalesInvoice',
           commit: true
         )
