@@ -14,6 +14,7 @@ module Weblinc
         @commit = options[:commit]
         @doc_type = options[:doc_type]
         @user = options[:user]
+        @payment = options[:payment]
       end
 
       # PurchaseOrder type means that the document will not be saved
@@ -55,7 +56,11 @@ module Weblinc
       end
 
       def shipping_address
-        address = @shipments.first.address
+        if @shipments.empty?
+          address = @payment.first.address
+        else
+          address = @shipments.first.address
+        end
         {
           AddressCode: DEFAULT_DEST_CODE,
           Line1: address.street,
