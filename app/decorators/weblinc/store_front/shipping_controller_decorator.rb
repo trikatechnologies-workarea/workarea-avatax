@@ -1,5 +1,5 @@
 module Weblinc
-  decorate(StoreFront::Checkout::Shipping, with: 'rachelroy') do
+  decorate(StoreFront::Checkout::Shipping, with: 'avatax') do
     private
 
     def updated_shipping_step_summary
