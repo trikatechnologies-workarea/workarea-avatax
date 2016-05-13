@@ -1,4 +1,5 @@
 - @title = ['AvaTax Test Connection']
+- @selected_navigation_nodes = ['Store', 'AvaTax plug-in', 'Test Connection']
 
 .avatax-test-connection-view.view
   %h1 AvaTax Test Connection
@@ -8,11 +9,16 @@
         %h2 Test Connection
         - if @connection.errors.any?
           - @connection.errors.each do |message|
-            .message--error
-              %p.message= message
+            .message.message--error
+              %p.message__type
+                %span.message__icon Error
+              %p.message__text= message
+
         - else
-          .message--success
-            %p.message #{@connection.status}
+          .message.message--success
+            %p.message__type
+              %span.message__icon Success
+            %p.message__text #{@connection.status}
 
         - @settings.each do |field, value|
           .property
@@ -20,7 +26,10 @@
               %span.text= field.to_s.titleize
             %br
             %span.text= value.to_s
-    .panel--buttons
+
+    .form-actions
       .action-group
-        %p= link_to 'Edit Settings', avatax_settings_url, class: 'text-button--muted'
-        %p= link_to 'Refresh', avatax_test_connection_url, class: 'text-button--muted'
+        .action-group__item
+          = link_to 'Refresh', avatax_test_connection_url, class: 'icon-text-button icon-text-button--refresh'
+        .action-group__item
+          = link_to 'Edit Settings', avatax_settings_url, class: 'button'
