@@ -1,5 +1,7 @@
-%li.menu-item
+%li.primary-nav__menu-item.primary-nav__menu-item--2
   %span AvaTax plug-in
-  %ul.nav-menu
-    %li.menu-item= link_to 'Settings', avatax_settings_url, class: 'item-node'
-    %li.menu-item= link_to 'Test Connection', avatax_test_connection_url, class: 'item-node'
+  %ul.primary-nav__nav-menu.primary-nav__nav-menu--3{ data: { title: 'AvaTax plug-in' } }
+    %li.primary-nav__menu-item.primary-nav__menu-item--3
+      = link_to 'AvaTax Settings', avatax_settings_url, class: navigation_node_class(@selected_navigation_nodes, 'AvaTax Settings', 3)
+    %li.primary-nav__menu-item.primary-nav__menu-item--3
+      = link_to 'Test Connection', avatax_test_connection_url, class: navigation_node_class(@selected_navigation_nodes, 'Test Connection', 3)

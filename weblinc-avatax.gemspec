@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.2.2'
 
-  s.add_dependency 'weblinc', '~> 2.0'
+  s.add_dependency 'weblinc', '~> 2.x'
   s.add_dependency 'avatax', '~> 14.4.4'
   s.add_dependency 'mongoid-enum', '~> 0.4.0'
 end
