@@ -6,7 +6,7 @@ module Weblinc
         include Calculator
 
         def adjust
-          return if shipments.map(&:address).compact.empty?
+          return unless has_shipments?
           return unless order.call_avatax_api_flag
           response = Weblinc::Avatax::TaxService.new(order, shipments).get
 
@@ -41,6 +41,16 @@ module Weblinc
               amount: tax_line['Tax'].to_m
             )
           end
+        end
+
+        # CheckoutsController#setup_view_models sets flag to true during the address step
+        # if the cart entered checkout previously it will still have a shipment address with
+        # only region, country and zip. This could cause people to see tax calculated in
+        # the order total on the address step but show TBD on the tax line.
+        def has_shipments?
+          return false if shipments.map(&:address).compact.empty? ||
+            shipments.map(&:address).map(&:street).compact.empty?
+          true
         end
       end
     end
