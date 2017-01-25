@@ -63,14 +63,15 @@ module Weblinc
     end
 
     describe '#updated_shipping_step_summary' do
-      it 'sets the avatax api flag to true' do
+      it 'sets the avatax api flag to true then false' do
         setup_checkout
 
         expect(controller.current_order.call_avatax_api_flag).to be false
 
+        # call_avatax_api_flag set to true within method then unset
         xhr :patch, '/checkout/shipping#update_shipping'
 
-        expect(controller.current_order.call_avatax_api_flag).to be true
+        expect(controller.current_order.call_avatax_api_flag).to be false
       end
     end
   end
