@@ -1,0 +1,6 @@
+inherit_from: .rails-rubocop.yml
+
+AllCops:
+  Exclude:
+    - 'lib/avatax.rb'
+    - 'lib/avatax/**/*'
