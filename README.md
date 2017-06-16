@@ -1,11 +1,11 @@
 # Avatax
 
 Avatax by Avalara provides a centralized service for tracking sales tax bills.
-This plugin integrates that service into the Weblinc platform. Instead of using
-the Weblinc platform's included sales tax caclulation system, it uses Avatax to
+This plugin integrates that service into the Workarea platform. Instead of using
+the Workarea platform's included sales tax caclulation system, it uses Avatax to
 calculate sales tax. After an order is placed, that order's sales tax bill is
 transmitted to Avatax. Users may choose to commit (save them so that they are
-reflected in tax liability) posted documents either via Weblinc platform, or
+reflected in tax liability) posted documents either via Workarea platform, or
 via their own order management system.
 
 ## Features
@@ -24,7 +24,7 @@ via their own order management system.
       - http://developer.avalara.com/api-docs/designing-your-integration/handling-tax-exempt-customers
 
 ## Requirements
-  * Access to your Weblinc administration
+  * Access to your Workarea administration
   * Avalara Avatax account(These values can be found in your Avalara administration console upon Registration)
     * Account Number
     * License Key
@@ -35,12 +35,12 @@ via their own order management system.
 
 #### 1) Add the Application gem to your gemfile in host application.
 ```ruby
-  gem 'weblinc-avatax', '~> <version>'
+  gem 'workarea-avatax', '~> <version>'
 ```
 
-#### 2) Configure the avatax plugin with the merchant's distribution center inside the host app's `config/initializers/weblinc.rb` file.
+#### 2) Configure the avatax plugin with the merchant's distribution center inside the host app's `config/initializers/workarea.rb` file.
 ```ruby
-  Weblinc::Avatax.configure do |config|
+  Workarea::Avatax.configure do |config|
     config.dist_center = {
       Line1: '1234 Your St',
       Line2: '',
