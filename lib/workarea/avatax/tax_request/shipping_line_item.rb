@@ -15,7 +15,7 @@ module Workarea
         end
 
         def amount
-          shipping.price_adjustments.adjusting("shipping").sum(&:amount).to_s
+          shipping.price_adjustments.adjusting("shipping").sum(&:amount)
         end
 
         def item_code

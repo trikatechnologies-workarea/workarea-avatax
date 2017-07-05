@@ -10,21 +10,10 @@ via their own order management system.
 
 ## Features
 #### Out of the Box
-   * Tax rate determination using Geocoding
-   * US Postal Service approved Address Validation
    * Full reporting feature with summarized and detailed reports
    * Constant real time updates with the latest rules and regulations for accuracy
 
-#### Extendability
-   * Global calculations
-   * Consumer Use
-   * State by State sales tax
-   * Automated Filing and Remittance
-   * Exemption Certificate Management
-      - http://developer.avalara.com/api-docs/designing-your-integration/handling-tax-exempt-customers
-
 ## Requirements
-  * Access to your Workarea administration
   * Avalara Avatax account(These values can be found in your Avalara administration console upon Registration)
     * Account Number
     * License Key
@@ -37,6 +26,15 @@ via their own order management system.
 ```ruby
   gem 'workarea-avatax', '~> <version>'
 ```
+
+#### 2) Add Avatax Secrets
+```ruby
+  avatax:
+    username: AVATAX_USERNAME
+    password: AVATAX_PASSWORD
+```
+
+Optionally set the endpoint to sandbox for testing.
 
 #### 2) Configure the avatax plugin with the merchant's distribution center inside the host app's `config/initializers/workarea.rb` file.
 ```ruby
@@ -51,11 +49,3 @@ via their own order management system.
     }
   end
 ```
-#### 3) Go to [your host app]/admin in the browser and set up your Avatax information in the Avatax settings.
-![image of settings link](https://www.evernote.com/l/AaQPfWK2CHlDPbF5mK5bPSJdy0NakiJmZ0YB/image.png)
-
-#### 4) Enter your configuration settings and save.
-![Image of Avatax Settings page](https://www.evernote.com/l/AaTbJD0hcnRJsojw6UO1J4ubJEm-d2ciJA4B/image.png)
-
-#### 5) Select test connection from either the settings screen or the settings menu.
-![Image of Conntection Page](https://www.evernote.com/l/AaRrPIQFMR9AA7yNTFx4KOMtCx1ZkVT5IJ8B/image.png)

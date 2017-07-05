@@ -28,9 +28,17 @@ module Workarea
             shipping_tax_line = response.tax_line_for_shipping(shipping)
             adjust_pricing(shipping, shipping_tax_line, "shipping_service_tax" => true)
           end
+        rescue Faraday::TimeoutError => error
+          handle_timeout_error(error)
         end
 
         private
+
+          def handle_timeout_error(error)
+            if defined?(Raven)
+              Raven.capture_exception(error)
+            end
+          end
 
           # If doing split shipping (different items go to different shipping
           # addresses), decorate this method to return the proper price
