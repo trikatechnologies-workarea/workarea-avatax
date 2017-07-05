@@ -10,7 +10,7 @@ module Workarea
       def hash
         {
           quantity:    quantity,
-          amount:      amount,
+          amount:      amount.to_s,
           itemCode:    item_code,
           taxCode:     tax_code,
           description: description,

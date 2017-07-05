@@ -28,6 +28,25 @@ module Workarea
 
     def self.auto_configure_gateway
       if Rails.application.secrets.avatax.present?
+        avatax_secrets = Rails.application.secrets.avatax.deep_symbolize_keys
+
+        connection_options = {
+          request: { timeout: avatax_secrets[:timeout] || 2 }
+        }
+
+        if ENV["HTTP_PROXY"].present?
+          connection_options.merge!(proxy: ENV["HTTP_PROXY"])
+        end
+
+        ::AvaTax.configure do |config|
+          if avatax_secrets[:endpoint].present?
+            config.endpoint = avatax_secrets[:endpoint]
+          end
+
+          config.username = avatax_secrets[:username]
+          config.password = avatax_secrets[:password]
+          config.connection_options = connection_options
+        end
         self.gateway = ::AvaTax.client
       elsif gateway.blank?
         self.gateway = Avatax::BogusGateway.new
