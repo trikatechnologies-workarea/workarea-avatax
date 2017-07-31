@@ -22,20 +22,20 @@ task default: :test
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 require "workarea/avatax/version"
 
-desc 'Generate the changelog based on git history'
+desc "Generate the changelog based on git history"
 task :changelog, :from, :to do |t, args|
-  require 'date'
+  require "date"
 
   from = args[:from] || `git describe --tags --abbrev=0`.strip
-  to = args[:to] || 'HEAD'
+  to = args[:to] || "HEAD"
   log = `git log #{from}..#{to} --pretty=format:'%an|%B___'`
 
   puts "Workarea Avatax #{Workarea::Avatax::VERSION} (#{Date.today})"
-  puts '-' * 80
+  puts "-" * 80
   puts
 
   log.split(/___/).each do |commit|
-    pieces = commit.split('|').reverse
+    pieces = commit.split("|").reverse
     author = pieces.pop.strip
     message = pieces.join.strip
 
@@ -68,7 +68,7 @@ desc "Release version #{Workarea::Avatax::VERSION} of the gem"
 task :release do
   host = "https://#{ENV['BUNDLE_GEMS__WEBLINC__COM']}@gems.weblinc.com"
 
-  system 'touch CHANGELOG.md'
+  system "touch CHANGELOG.md"
   system 'echo "$(rake changelog)\n\n\n$(cat CHANGELOG.md)" > CHANGELOG.md'
   system 'git add CHANGELOG.md && git commit -m "Update changelog" && git push origin head'
 
