@@ -10,7 +10,7 @@ module Workarea
       end
 
       def response
-        Response.new(
+        @response ||= Response.new(
           response: Avatax.gateway.create_transaction(request_body),
           request_order_line_items: order_line_items,
           request_shipping_line_items: shipping_line_items
