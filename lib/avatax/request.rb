@@ -1,3 +1,5 @@
+require 'hashie'
+
 module AvaTax
   module Request
 
@@ -5,8 +7,8 @@ module AvaTax
       request(:get, path, options)
     end
 
-    def post(path, body, options={})
-      request(:post, path, options.merge(body: body.to_json))
+    def post(path, options={})
+      request(:post, path, options)
     end
 
     def put(path, options={})
@@ -24,9 +26,11 @@ module AvaTax
           request.url(URI.encode(path), options)
         when :post, :put
           request.path = URI.encode(path)
-          request.body = options[:body] unless options[:body].empty?
+          request.headers['Content-Type'] = 'application/json'
+          request.body = options.to_json unless options.empty?
         end
       end
     end
+
   end
 end
