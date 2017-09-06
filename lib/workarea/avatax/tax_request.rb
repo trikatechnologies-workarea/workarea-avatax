@@ -6,7 +6,7 @@ module Workarea
       def initialize(order:, shippings: [], **options)
         @order = order
         @shippings = shippings
-        @options = options
+        @options = options.deep_symbolize_keys
       end
 
       def response
@@ -41,11 +41,11 @@ module Workarea
         end
 
         def type
-          options["type"] || "SalesOrder"
+          options[:type] || "SalesOrder"
         end
 
         def commit
-          options["commit"] || false
+          options[:commit] || false
         end
 
         def customer_code

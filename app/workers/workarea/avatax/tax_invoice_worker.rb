@@ -13,14 +13,14 @@ module Workarea
 
       def perform(order_id)
         order = Workarea::Order.find(order_id)
-        shippings = Workarea::where(order_id: order.id).to_a
+        shippings = Workarea::Shipping.where(order_id: order.id).to_a
 
         response = Avatax::TaxRequest.new(
           order: order,
           shippings: shippings,
           type: "SalesInvoice",
-          commit: AvaTax.commit?
-        )
+          commit: Avatax.commit?
+        ).response
 
         raise "Failed to invoice tax for order: #{order.id}" unless response.success?
       end
