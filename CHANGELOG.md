@@ -1,3 +1,25 @@
+Workarea Avatax 3.0.1 (2017-09-06)
+--------------------------------------------------------------------------------
+
+*   Update vendored version of avatax gem
+
+    Update vendored avatax gem. there's still some problems preventing use
+    of the cut version, notable it returning hashie mash responses instead
+    of faraday responses.  memoize .resposne on a tax request to stop it
+    from creating a transaction everytime the response is accessed.
+
+    AVATAX-22
+    Eric Pigeon
+
+*   Fix bugs with commiting a tax transaction.
+
+    Commit fixes to tax worker to use correct symbolized keys on transaction.
+    fix bug with improper response reference on the invoice worker
+
+    AVATAX-22
+    Jeff Yucis
+
+
 Workarea Avatax 3.0.0 (2017-07-06)
 --------------------------------------------------------------------------------
 
@@ -20,6 +42,3 @@ Workarea Avatax 3.0.0 (2017-07-06)
 
     AVATAX-20
     Eric Pigeon
-
-
-
