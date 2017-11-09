@@ -11,7 +11,7 @@ module Workarea
 
       def response
         @response ||= Response.new(
-          response: Avatax.gateway.create_transaction(request_body),
+          response: Avatax.gateway.create_transaction(request_body, request_options),
           request_order_line_items: order_line_items,
           request_shipping_line_items: shipping_line_items
         )
@@ -24,12 +24,17 @@ module Workarea
             type:              type,
             date:              date,
             code:              order.id.to_s,
+            companyCode:       company_code,
             customerCode:      customer_code,
             customerUsageType: customer_usage_type,
             addresses:         addresses.hash,
             commit:            commit,
             lines:             lines.map(&:hash)
           }
+        end
+
+        def request_options
+          options.slice(:timeout)
         end
 
         def addresses
@@ -58,6 +63,10 @@ module Workarea
           return "" unless order.email.present?
 
           User.find_by_email(order.email).try(:customer_usage_type)
+        end
+
+        def company_code
+          Workarea::Avatax.config.company_code
         end
 
         # combined order item and shipping lines with sequential numbering applied
