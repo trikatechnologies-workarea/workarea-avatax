@@ -14,6 +14,8 @@ module Workarea
     # :commit - a commited salesInvoice is created
     config.order_handling = :none
 
+    config.company_code = nil
+
     def self.commit?
       config.order_handling == :commit
     end

@@ -6,7 +6,11 @@ module Workarea
         include Calculator
 
         def adjust
-          response = Avatax::TaxRequest.new(order: order, shippings: shippings).response
+          response = Avatax::TaxRequest.new(
+            order: order,
+            shippings: shippings,
+            **request_options
+          ).response
 
           return unless response.success?
 
@@ -28,17 +32,21 @@ module Workarea
             shipping_tax_line = response.tax_line_for_shipping(shipping)
             adjust_pricing(shipping, shipping_tax_line, "shipping_service_tax" => true)
           end
-        rescue Faraday::TimeoutError => error
-          handle_timeout_error(error)
+        rescue Faraday::Error => error
+          Raven.capture_exception(error) if defined?(Raven)
+          avatax_fallback(error)
         end
 
         private
 
-          def handle_timeout_error(error)
-            if defined?(Raven)
-              Raven.capture_exception(error)
-            end
+          def request_options
+            { timeout: 2 }
           end
+
+          def avatax_fallback(_error)
+            Weblinc::Pricing::Calculators::TaxCalculator.new(request).adjust
+          end
+          alias_method :handle_timeout_error, :avatax_fallback
 
           # If doing split shipping (different items go to different shipping
           # addresses), decorate this method to return the proper price

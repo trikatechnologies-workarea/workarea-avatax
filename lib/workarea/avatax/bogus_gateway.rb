@@ -26,7 +26,7 @@ module Workarea
           end
       end
 
-      def create_transaction(body)
+      def create_transaction(body, options = {})
         BogusCreateTransaction.new(body).response
       end
     end
