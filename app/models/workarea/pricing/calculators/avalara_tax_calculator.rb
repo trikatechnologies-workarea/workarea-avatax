@@ -44,7 +44,7 @@ module Workarea
           end
 
           def avatax_fallback(_error)
-            Weblinc::Pricing::Calculators::TaxCalculator.new(request).adjust
+            Pricing::Calculators::TaxCalculator.new(request).adjust
           end
           alias_method :handle_timeout_error, :avatax_fallback
 
