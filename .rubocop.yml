@@ -4,3 +4,4 @@ AllCops:
   Exclude:
     - 'lib/avatax.rb'
     - 'lib/avatax/**/*'
+    - 'vendor/**/*'
