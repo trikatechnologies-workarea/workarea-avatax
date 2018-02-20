@@ -1,3 +1,24 @@
+Workarea Avatax 4.0.0 (2018-02-20)
+--------------------------------------------------------------------------------
+
+*   Remove vendored AvaTax code, use gem from RubyGems
+
+    This had the potential to cause some issues when combining usage of the
+    workarea-avatax plugin with that of the workarea-address_verification
+    plugin.
+
+    AVATAX-27
+    Tom Scott
+
+*   Add timeout during pricing calculator
+
+    update vendored avatax gem files
+    add company code to request
+
+    AVATAX-25
+    Eric Pigeon
+
+
 Workarea Avatax 3.0.1 (2017-09-06)
 --------------------------------------------------------------------------------
 
