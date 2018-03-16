@@ -26,6 +26,7 @@ module Workarea
           "FOREIGN DIPLOMAT"              => "Foreign diplomat",
           "CHARITABLE/EXEMPT ORG"         => "Charitable or excempt org",
           "RELIGIOUS/EDUCATIONAL ORG"     => "Religious or educational org",
+          "EDUCATIONAL ORG"               => "Educational org",
           "RESALE"                        => "Resale",
           "AGRICULTURE"                   => "Commercial agricultural production",
           "INDUSTRIAL PROD/MANUFACTURERS" => "Industrial production / manufacturer",
