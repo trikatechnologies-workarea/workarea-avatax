@@ -25,7 +25,7 @@ module Workarea
           "TRIBAL GOVERNMENT"             => "Tribal Government",
           "FOREIGN DIPLOMAT"              => "Foreign diplomat",
           "CHARITABLE/EXEMPT ORG"         => "Charitable or excempt org",
-          "RELIGIOUS/EDUCATIONAL ORG"     => "Religious or educational org",
+          "RELIGIOUS ORG"                 => "Religious or educational org",
           "EDUCATIONAL ORG"               => "Educational org",
           "RESALE"                        => "Resale",
           "AGRICULTURE"                   => "Commercial agricultural production",
