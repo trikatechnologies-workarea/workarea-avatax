@@ -5,10 +5,18 @@ rescue LoadError
   puts "You must `gem install bundler` and `bundle install` to run rake tasks"
 end
 
+require "rdoc/task"
+RDoc::Task.new(:rdoc) do |rdoc|
+  rdoc.rdoc_dir = "rdoc"
+  rdoc.title    = "Moneris"
+  rdoc.options << "--line-numbers"
+  rdoc.rdoc_files.include("README.md")
+  rdoc.rdoc_files.include("lib/**/*.rb")
+end
+
 APP_RAKEFILE = File.expand_path("../test/dummy/Rakefile", __FILE__)
 load "rails/tasks/engine.rake"
 load "rails/tasks/statistics.rake"
-require "rake/testtask"
 
 require "rake/testtask"
 Rake::TestTask.new(:test) do |t|
@@ -19,14 +27,22 @@ Rake::TestTask.new(:test) do |t|
 end
 task default: :test
 
-$LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
+$LOAD_PATH.unshift File.expand_path("lib", __dir__)
 require "workarea/avatax/version"
 
 desc "Generate the changelog based on git history"
 task :changelog, :from, :to do |t, args|
   require "date"
 
-  from = args[:from] || `git describe --tags --abbrev=0`.strip
+  from =
+    if args[:from].present?
+      args[:from]
+    elsif `git tag`.empty?
+      `git rev-list --max-parents=0 HEAD`.strip
+    else
+      `git describe --tags --abbrev=0`.strip
+    end
+
   to = args[:to] || "HEAD"
   log = `git log #{from}..#{to} --pretty=format:'%an|%B___'`
 
@@ -40,11 +56,17 @@ task :changelog, :from, :to do |t, args|
     message = pieces.join.strip
 
     next if message =~ /^\s*Merge pull request/
-    next if message =~ /No changelog/
+    next if message =~ /No changelog/i
 
-    ticket = message.scan(/AVATAX-\d+/)[0]
-    next if ticket.nil?
-    next if message =~ /^\s*Merge branch/ && ticket.nil?
+    project_key = "AVATAX"
+
+    if project_key.blank?
+      puts "To clean up your release notes, add your project's Jira key to the Changelog Rake task!"
+    else
+      ticket = message.scan(/#{project_key}-\d+/)[0]
+      next if ticket.nil?
+      next if message =~ /^\s*Merge branch/ && ticket.nil?
+    end
 
     first_line = false
 
