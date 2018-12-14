@@ -18,7 +18,7 @@ module Workarea
             next unless shipping.address.present?
 
             price_adjustments_for(shipping).each do |adjustment|
-              tax_line = response.tax_line_for_adjustment adjustment
+              tax_line = response.tax_line_for_adjustment adjustment, shipping: shipping
               next unless tax_line.present?
 
               adjust_pricing(
