@@ -12,8 +12,8 @@ module Workarea
       def response
         @response ||= Response.new(
           response: Avatax.gateway.create_transaction(request_body, request_options),
-          request_order_line_items: order_line_items,
-          request_shipping_line_items: shipping_line_items
+          request_order_line_items: order_lines.order_line_items,
+          request_shipping_line_items: order_lines.shipping_line_items
         )
       end
 
@@ -29,7 +29,7 @@ module Workarea
             customerUsageType: customer_usage_type,
             addresses:         addresses.hash,
             commit:            commit,
-            lines:             lines.map(&:hash)
+            lines:             order_lines.lines.map(&:hash)
           }
         end
 
@@ -69,29 +69,8 @@ module Workarea
           Workarea::Avatax.config.company_code
         end
 
-        # combined order item and shipping lines with sequential numbering applied
-        def lines
-          (order_line_items + shipping_line_items).map.with_index(1) do |line_item, index|
-            line_item.tap { |li| li.line_number = index }
-          end
-        end
-
-        def order_line_items
-          @order_line_items ||= order_price_adjustments.grouped_by_parent.flat_map do |item, set|
-            set.map do |adjustment|
-              next unless adjustment.data["tax_code"].present?
-
-              OrderLineItem.new(order_item: item, adjustment: adjustment, adjustment_set: set)
-            end
-          end.compact
-        end
-
-        def order_price_adjustments
-          order.price_adjustments
-        end
-
-        def shipping_line_items
-          @shipping_line_item ||= shippings.map { |shipping| ShippingLineItem.new(shipping: shipping) }
+        def order_lines
+          @order_lines ||= OrderLines.new(order, shippings)
         end
     end
   end

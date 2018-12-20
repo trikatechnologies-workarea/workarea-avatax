@@ -1,22 +1,28 @@
 module Workarea
   module Avatax
     class TaxRequest::OrderLineItem < TaxRequest::LineItem
-      attr_reader :order_item, :adjustment
+      attr_reader :order_item, :adjustment, :shipping
 
-      def initialize(order_item:, adjustment:, adjustment_set:)
+      def initialize(order_item:, adjustment:, adjustment_set:, quantity: nil, shipping: nil)
         @order_item = order_item
         @adjustment = adjustment
         @adjustment_set = adjustment_set
+        @quantity = quantity
+        @shipping = shipping
       end
 
       private
 
         def quantity
-          adjustment.quantity
+          @quantity || adjustment.quantity
         end
 
         def amount
-          @adjustment_set.taxable_share_for adjustment
+          total = @adjustment_set.taxable_share_for adjustment
+          if shipping.present? && shipping.partial?
+            total *= quantity / order_item.quantity.to_f
+          end
+          total
         end
 
         def item_code

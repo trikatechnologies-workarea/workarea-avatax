@@ -61,6 +61,7 @@ end
 require "workarea/avatax/engine"
 require "workarea/avatax/version"
 require "workarea/avatax/tax_request"
+require "workarea/avatax/tax_request/order_lines"
 require "workarea/avatax/tax_request/line_item"
 require "workarea/avatax/tax_request/order_line_item"
 require "workarea/avatax/tax_request/shipping_line_item"
