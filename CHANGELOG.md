@@ -1,3 +1,16 @@
+Workarea Avatax 4.1.0 (2018-12-20)
+--------------------------------------------------------------------------------
+
+*   Add support for partial shippings
+
+    Update the tax request to split up order line items by
+    `Workarea::Shipping#quantities` for orders with multiple shippings
+
+    AVATAX-30
+    Eric Pigeon
+
+
+
 Workarea Avatax 4.0.1 (2018-04-24)
 --------------------------------------------------------------------------------
 
