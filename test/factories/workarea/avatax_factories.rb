@@ -44,43 +44,43 @@ module Workarea
       end
 
       def create_split_shipping_checkout_order(overrides = {})
-        attributes = { email: 'epigeon@workarea.com' }.merge overrides
+        attributes = { email: "epigeon@workarea.com" }.merge overrides
         product_1 = create_product(
-          id: 'PROD1',
-          name: 'Split Shipping Product One',
-          variants: [{ sku: 'SKU1', regular: 5.to_m, tax_code: '001' }]
+          id: "PROD1",
+          name: "Split Shipping Product One",
+          variants: [{ sku: "SKU1", regular: 5.to_m, tax_code: "001" }]
         )
         product_2 = create_product(
-          id: 'PROD2',
-          name: 'Split Shipping Product Two',
-          variants: [{ sku: 'SKU2', regular: 7.to_m, tax_code: '001' }]
+          id: "PROD2",
+          name: "Split Shipping Product Two",
+          variants: [{ sku: "SKU2", regular: 7.to_m, tax_code: "001" }]
         )
         product_3 = create_product(
-          id: 'PROD3',
-          name: 'Split Shipping Product Three',
-          variants: [{ sku: 'SKU3', regular: 9.to_m, tax_code: '001' }]
+          id: "PROD3",
+          name: "Split Shipping Product Three",
+          variants: [{ sku: "SKU3", regular: 9.to_m, tax_code: "001" }]
         )
-        ground = create_shipping_service(name: 'Ground', tax_code: '001', rates: [{ price: 5.to_m }])
-        express = create_shipping_service(name: 'Express', tax_code: '001', rates: [{ price: 10.to_m }])
+        ground = create_shipping_service(name: "Ground", tax_code: "001", rates: [{ price: 5.to_m }])
+        express = create_shipping_service(name: "Express", tax_code: "001", rates: [{ price: 10.to_m }])
 
         Workarea::Order.new(attributes).tap do |order|
           order.items.build(
-            product_id: 'PROD1',
-            sku: 'SKU1',
+            product_id: "PROD1",
+            sku: "SKU1",
             quantity: 2,
             product_attributes: product_1.as_document
           )
 
           order.items.build(
-            product_id: 'PROD2',
-            sku: 'SKU2',
+            product_id: "PROD2",
+            sku: "SKU2",
             quantity: 2,
             product_attributes: product_2.as_document
           )
 
           order.items.build(
-            product_id: 'PROD3',
-            sku: 'SKU3',
+            product_id: "PROD3",
+            sku: "SKU3",
             quantity: 4,
             product_attributes: product_3.as_document
           )

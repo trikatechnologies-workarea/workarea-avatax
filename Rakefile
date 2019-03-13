@@ -17,7 +17,7 @@ end
 APP_RAKEFILE = File.expand_path("../test/dummy/Rakefile", __FILE__)
 load "rails/tasks/engine.rake"
 load "rails/tasks/statistics.rake"
-load 'workarea/changelog.rake'
+load "workarea/changelog.rake"
 
 require "rake/testtask"
 Rake::TestTask.new(:test) do |t|
@@ -35,10 +35,10 @@ desc "Release version #{Workarea::Avatax::VERSION} of the gem"
 task :release do
   host = "https://#{ENV['BUNDLE_GEMS__WEBLINC__COM']}@gems.weblinc.com"
 
-  Rake::Task['workarea:changelog'].execute
-  system 'git add CHANGELOG.md'
+  Rake::Task["workarea:changelog"].execute
+  system "git add CHANGELOG.md"
   system 'git commit -m "Update CHANGELOG"'
-  system 'git push origin HEAD'
+  system "git push origin HEAD"
 
   system "git tag -a v#{Workarea::Avatax::VERSION} -m 'Tagging #{Workarea::Avatax::VERSION}'"
   system "git push --tags"

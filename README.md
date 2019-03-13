@@ -9,25 +9,30 @@ reflected in tax liability) posted documents either via Workarea platform, or
 via their own order management system.
 
 ## Features
-#### Out of the Box
-   * Full reporting feature with summarized and detailed reports
-   * Constant real time updates with the latest rules and regulations for accuracy
+
+### Out of the Box
+
+* Full reporting feature with summarized and detailed reports
+* Constant real time updates with the latest rules and regulations for accuracy
 
 ## Requirements
-  * Avalara Avatax account(These values can be found in your Avalara administration console upon Registration)
-    * Account Number
-    * License Key
-    * API URL
-    * Shipping Item Code or Tax Code
+
+* Avalara Avatax account (These values can be found in your Avalara administration console upon Registration)
+* Account Number
+* License Key
+* API URL
+* Shipping Item Code or Tax Code
 
 ## Installation and Configuration
 
-#### 1) Add the Application gem to your gemfile in host application.
+### 1) Add the Application gem to your gemfile in host application
+
 ```ruby
   gem 'workarea-avatax', '~> <version>'
 ```
 
-#### 2) Add Avatax Secrets
+### 2) Add Avatax Secrets
+
 ```ruby
   avatax:
     username: AVATAX_USERNAME
@@ -36,7 +41,8 @@ via their own order management system.
 
 Optionally set the endpoint to sandbox for testing.
 
-#### 2) Configure the avatax plugin with the merchant's distribution center inside the host app's `config/initializers/workarea.rb` file.
+### 3) Configure the avatax plugin with the merchant's distribution center inside the host app's `config/initializers/workarea.rb` file
+
 ```ruby
   Workarea::Avatax.configure do |config|
     config.dist_center = {
