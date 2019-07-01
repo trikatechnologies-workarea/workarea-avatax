@@ -118,7 +118,7 @@ module Workarea
             address: {
               first_name:  "Eric",
               last_name:   "Pigeon",
-              street:      "22 S 3rd St",
+              street:      "12 N 3rd St",
               city:        "Philadelphia",
               region:      "PA",
               postal_code: 19106,

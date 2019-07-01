@@ -24,7 +24,17 @@ module Workarea
             itemCode: "SKU1",
             taxCode: "001",
             description: "Split Shipping Product One",
-            number: 1
+            number: 1,
+            addresses: {
+              shipTo: {
+                line1: "22 S 3rd St",
+                line2: nil,
+                city: "Philadelphia",
+                region: "PA",
+                country: "US",
+                postalCode: "19106"
+              }
+            }
           },
           {
             quantity: 1,
@@ -32,7 +42,17 @@ module Workarea
             itemCode: "SKU2",
             taxCode: "001",
             description: "Split Shipping Product Two",
-            number: 2
+            number: 2,
+            addresses: {
+              shipTo: {
+                line1: "22 S 3rd St",
+                line2: nil,
+                city: "Philadelphia",
+                region: "PA",
+                country: "US",
+                postalCode: "19106"
+              }
+            }
           },
           {
             quantity: 1,
@@ -40,7 +60,17 @@ module Workarea
             itemCode: "SKU2",
             taxCode: "001",
             description: "Split Shipping Product Two",
-            number: 3
+            number: 3,
+            addresses: {
+              shipTo: {
+                line1: "12 N 3rd St",
+                line2: nil,
+                city: "Philadelphia",
+                region: "PA",
+                country: "US",
+                postalCode: "19106"
+              }
+            }
           },
           {
             quantity: 4,
@@ -48,7 +78,17 @@ module Workarea
             itemCode: "SKU3",
             taxCode: "001",
             description: "Split Shipping Product Three",
-            number: 4
+            number: 4,
+            addresses: {
+              shipTo: {
+                line1: "12 N 3rd St",
+                line2: nil,
+                city: "Philadelphia",
+                region: "PA",
+                country: "US",
+                postalCode: "19106"
+              }
+            }
           },
           {
             quantity: 1,

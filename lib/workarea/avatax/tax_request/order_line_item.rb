@@ -13,6 +13,21 @@ module Workarea
 
       private
 
+        def addresses
+          return unless address = shipping&.address
+
+          {
+            shipTo: {
+              line1:      address.street,
+              line2:      address.street_2,
+              city:       address.city,
+              region:     address.region,
+              country:    address.country.alpha2,
+              postalCode: address.postal_code
+            }
+          }
+        end
+
         def quantity
           @quantity || adjustment.quantity
         end

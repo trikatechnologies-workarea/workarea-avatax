@@ -14,8 +14,9 @@ module Workarea
           itemCode:    item_code,
           taxCode:     tax_code,
           description: description,
-          number:      line_number
-        }
+          number:      line_number,
+          addresses:   addresses
+        }.compact
       end
 
       private
@@ -39,6 +40,8 @@ module Workarea
         def description
           raise NotImplementedError, "#{self.class.name} must implement #description_code"
         end
+
+        def addresses; end
     end
   end
 end
