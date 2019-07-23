@@ -1,3 +1,16 @@
+Workarea Avatax 4.1.1 (2019-07-23)
+--------------------------------------------------------------------------------
+
+*   Pass addresses on order line items in tax request
+
+    Pass the addresses.shipTo adress on order line items when using the
+    split shipping plugin
+
+    AVATAX-34
+    Eric Pigeon
+
+
+
 Workarea Avatax 4.1.0 (2018-12-20)
 --------------------------------------------------------------------------------
 
