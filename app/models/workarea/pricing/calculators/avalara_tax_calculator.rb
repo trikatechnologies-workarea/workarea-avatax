@@ -1,7 +1,8 @@
 module Workarea
   module Pricing
     module Calculators
-      # calculates order/shipping sales tax via the Avalara Avatax API
+      # Calculates order/shipping sales tax via the Avalara Avatax API
+      #
       class AvalaraTaxCalculator
         include Calculator
 
