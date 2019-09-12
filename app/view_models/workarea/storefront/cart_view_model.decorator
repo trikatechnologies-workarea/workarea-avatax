@@ -1,8 +1,7 @@
 module Workarea
   decorate Storefront::CartViewModel, with: :avatax do
-    # forces display of "Calculated at Checkout"
     def show_taxes?
-      false
+      super && tax_total.present?
     end
   end
 end
