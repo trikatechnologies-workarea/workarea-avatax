@@ -1,3 +1,15 @@
+Workarea Avatax 4.1.2 (2019-09-17)
+--------------------------------------------------------------------------------
+
+*   Fix when to display taxes in cart
+
+    Display taxes in cart if they have already been calculated.
+
+    AVATAX-38
+    Eric Pigeon
+
+
+
 Workarea Avatax 4.1.1 (2019-07-23)
 --------------------------------------------------------------------------------
 
