@@ -40,8 +40,7 @@ module Workarea
         def single_shipping_lines
           grouped_order_price_adjustments.flat_map do |item, set|
             set.map do |adjustment|
-              next unless adjustment.data["tax_code"].present?
-
+              adjustment.data["tax_code"] = Workarea.config.default_avatax_code if adjustment.data["tax_code"].blank?
               TaxRequest::OrderLineItem.new(order_item: item, adjustment: adjustment, adjustment_set: set)
             end
           end.compact
